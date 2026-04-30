@@ -184,7 +184,7 @@ const iframeTitle = ref('');
 const iframeUrl = ref();
 const getDetailUrl = (link, item, type = 'offer') => {
     // We use Wanhong.com as requested by user, falling back to current origin in dev
-    const baseUrl = window.location.origin.includes('localhost') ? window.location.origin : 'https://Wanhong.com';
+    const baseUrl = window.location.origin;
     const params = new URLSearchParams({
         link: link,
         surveyId: type === 'offer' ? item.project_pno : ('platform_' + item.platform_id),

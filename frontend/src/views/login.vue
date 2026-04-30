@@ -57,7 +57,7 @@
         <div class="content-wrapper">
             <div class="content">
                 <div class="login">
-                    <img v-if="sys.logo_url" :src="sys.logo_url" class="login-logo" alt="Logo">
+                    <img src="@/assets/logo.png" class="login-logo" alt="Logo">
                     <h1>Welcome Back👋🏻</h1>
                     <div class="subtitle">Enter your account details to participate survey</div>
                     <form class="el-form login-form el-form--label-left" auto-complete="off">
@@ -371,7 +371,7 @@ figure #bike1 use {
     height: 100%;
     padding: 60px 48px;
     background: #111;
-    box-shadow: 0 0 5px rgba(64, 209, 185, 0.85);
+    box-shadow: 0 0 15px rgba(55, 78, 118, 0.5);
     display: flex;
     align-items: center;
     overflow-y: auto;
@@ -439,7 +439,7 @@ figure #bike1 use {
     width: 100%;
     font-size: 18px;
     line-height: 52px;
-    background: rgba(0, 255, 213, 0.15);
+    background: rgba(55, 78, 118, 0.2);
     animation: firefly-glow 1s ease-in-out infinite;
     user-select: none;
 }
@@ -468,7 +468,7 @@ figure #bike1 use {
     left: 0;
     top: 0;
     clip-path: inset(0 0 0 0);
-    border: 2px solid rgba(23, 207, 240, 0.45);
+    border: 2px solid rgba(55, 78, 118, 0.6);
     animation: animate 3s linear infinite;
 }
 

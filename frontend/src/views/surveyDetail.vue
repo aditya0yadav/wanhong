@@ -17,7 +17,7 @@
       <div v-else class="content-state">
         <header class="header">
           <h1 class="title">问卷安全分析</h1>
-          <p class="subtitle">Wanhong 安全防护系统已为您完成全方位检测</p>
+          <p class="subtitle">安全防护系统已为您完成全方位检测</p>
         </header>
 
         <div class="score-display">
@@ -133,7 +133,7 @@ const fetchScore = async () => {
       username: 'guest'
     };
 
-    const response = await fetch("https://api.Wanhong.com/api/fraud/check", {
+    const response = await fetch(`${window.location.origin}/api/fraud/check`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)

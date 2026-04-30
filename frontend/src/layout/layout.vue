@@ -4,7 +4,7 @@
             <div class="v2-index-header-box">
                 <!-- Logo -->
                 <div class="header-logo-wrap">
-                    <a href="/offers"><img :src="sys.logo_url" class="v2-index-header-logo"></a>
+                    <a href="/offers"><img src="@/assets/logo.png" class="v2-index-header-logo"></a>
                 </div>
 
                 <!-- Desktop Nav -->
@@ -63,11 +63,11 @@
                                 </el-dropdown-menu>
                             </template>
                         </el-dropdown>
-                        <div class="notice" style="padding-left:15px;cursor: pointer;">
+                        <div class="notice" style="padding-left:15px;cursor: pointer;color: #374E76;">
                             <el-badge v-if="noticeNum" :value="noticeNum" class="item" @click="openDrawer" size="small" style="margin-right: 10px;">
-                                <el-icon size="20"><BellFilled /></el-icon>
+                                <el-icon size="20" color="#374E76"><BellFilled /></el-icon>
                             </el-badge>
-                            <el-icon v-else size="20" @click="openDrawer"><BellFilled /></el-icon>
+                            <el-icon v-else size="20" @click="openDrawer" color="#374E76"><BellFilled /></el-icon>
                         </div>
                         <div v-if="hb === 'coins'" class="balance-chip">
                             {{ statisticsData['success'] }}<img src="../assets/coin.svg" alt="" style="width: 16px; margin-left: 5px;" />
@@ -1199,7 +1199,7 @@ footer {
             .tit {
                 max-width: 150px;
                 opacity: 1;
-                color: var(--t-color);
+                color: #374E76;
             }
         }
     }

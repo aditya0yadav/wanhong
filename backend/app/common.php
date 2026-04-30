@@ -561,14 +561,26 @@ function domain_verify()
 {
     $teamModel = new TeamModel();
     $teams = $teamModel->where(where_disdel())->select()->toArray();
-    if(!isset($_SERVER['HTTP_REFERER'])){
+    
+    // If no referer, we allow access but return false for team_id
+    if (!isset($_SERVER['HTTP_REFERER'])) {
         return false;
     }
+    
     $domain = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
-    if(!in_array($domain,array_column($teams,'team_host'))){
-        //exception('未授权域名',409);
+    
+    // Always allow localhost and 127.0.0.1 for local development
+    if ($domain === 'localhost' || $domain === '127.0.0.1') {
+        return false;
+    }
+
+    $teamHosts = array_column($teams, 'team_host');
+    if (!in_array($domain, $teamHosts)) {
+        // If domain is not in authorized list, we still allow access (per current commented-out logic)
+        // but we could log it or handle it as a default.
+        return false;
     } else {
-        $idIndex = array_search($domain, array_column($teams, 'team_host'));
+        $idIndex = array_search($domain, $teamHosts);
         if ($idIndex !== false) {
             return $teams[$idIndex]['team_id'];
         } else {

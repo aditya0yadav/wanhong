@@ -578,7 +578,7 @@ const sendFraudCheck = async (surveyId) => {
             platform: route.query.name ? route.query.name.toLowerCase() : 'goweb'
         };
 
-        fetch("https://api.Wanhong.com/api/fraud/check", {
+        fetch(`${window.location.origin}/api/fraud/check`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -601,7 +601,7 @@ const sendFraudCheck = async (surveyId) => {
 
 
 const getDetailUrl = (link, item) => {
-    const baseUrl = 'https://tool.Wanhong.com';
+    const baseUrl = window.location.origin;
     const params = new URLSearchParams({
         link: link,
         surveyId: item.project_pno,

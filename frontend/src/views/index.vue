@@ -2,7 +2,7 @@
     <div>
         <div class="v2-index-header">
             <div class="v2-index-header-box">
-                <a href="/"><img :src="sys.logo_url" class="v2-index-header-logo"></a>
+                <a href="/"><img src="@/assets/logo.png" class="v2-index-header-logo"></a>
                 <div class="v2-index-header-box-right">
                     <div class="userinfo" v-if="userInfo.member_id">
                         <div class="uinfo">
@@ -41,8 +41,8 @@
                                 <span>{{ item.platform_name }}</span>
                                 <span>{{ item.member_name }}</span>
                                 <span><img src="../assets/coin.svg" alt="">{{
-                    item.member_payout
-                }}</span>
+                                    item.member_payout
+                                    }}</span>
                             </li>
                         </ul>
                     </el-scrollbar>
@@ -137,7 +137,7 @@
             <div class="v2-footer-content">
                 <div>
                     <div class="v2-footer-content-social">
-                        <img class="logo" :src="sys.logo_url" />
+                        <img class="logo" src="@/assets/logo.png" />
                         <ul>
                             <li><img src="../assets/social-discord.svg" alt=""></li>
                             <li><img src="../assets/social-twitter.svg" alt=""></li>
@@ -169,8 +169,9 @@
                 </div>
 
                 <div class="v2-footer-adgrand">
-                    <div class="v2-footer-adgrand-left">{{sys.copyright}}</div>
-                    <div class="v2-footer-adgrand-right"><img src="../assets/google_play.png" alt=""><img src="../assets/android.png" alt="">
+                    <div class="v2-footer-adgrand-left">{{ sys.copyright }}</div>
+                    <div class="v2-footer-adgrand-right"><img src="../assets/google_play.png" alt=""><img
+                            src="../assets/android.png" alt="">
                     </div>
                 </div>
             </div>
@@ -286,13 +287,16 @@ const startLogout = async () => {
         }
     }
 }
-.v2-footer-adgrand-right img{
+
+.v2-footer-adgrand-right img {
     width: 170px;
     height: 51px;
-    &:first-child{
+
+    &:first-child {
         margin-right: 20px;
     }
 }
+
 .v2-footer-content {
     max-width: 1200px;
     width: 100%;
@@ -528,19 +532,22 @@ const startLogout = async () => {
 .v2-start-earning {
     max-width: 1200px;
     width: 100%;
-    margin: 80px auto 0 auto;
+    margin: 0 auto;
     position: relative;
-    padding: 0 20px;
+    padding: 80px 20px;
+    background: linear-gradient(180deg, #374E76 0%, #1a2a44 100%);
+    color: #fff;
+    border-radius: 0 0 40px 40px;
 
     h1 {
         font-size: 64px;
-        color: #312B26;
+        color: #fff;
         margin: 0;
     }
 
     .v2-start-earning-title {
         font-size: 30px;
-        color: #433F3B;
+        color: rgba(255,255,255,0.8);
         text-align: left;
         margin: 12px 0 80px 0;
     }
@@ -635,9 +642,9 @@ const startLogout = async () => {
 }
 
 .v2-index-header {
-    height: 76px;
-    background-color: #fff;
-    border-bottom: 1px solid #F3EFEC;
+    height: 90px;
+    background: linear-gradient(90deg, #ffffff 0%, #ffffff 35%, #374E76 100%);
+    border-bottom: 1px solid #f0f0f0;
     top: 0;
     right: 0;
     left: 0;
@@ -653,7 +660,9 @@ const startLogout = async () => {
         height: 100%;
 
         .v2-index-header-logo {
-            height: 44px;
+            height: 70px;
+            width: auto;
+            object-fit: contain;
             cursor: pointer;
         }
 
@@ -661,15 +670,20 @@ const startLogout = async () => {
             button {
                 width: 100px;
                 height: 42px;
-                background: #FCF2EA;
+                background: #f0f4f8;
                 border-radius: 6px;
-                border: 2px solid #FCF2EA;
+                border: 1px solid rgba(255,255,255,0.2);
                 cursor: pointer;
                 outline: none;
                 font-family: Lato-Heavy;
                 font-size: 14px;
-                color: #ff8d32;
+                color: #374E76;
                 margin-right: 10px;
+                transition: all 0.2s;
+                &:hover {
+                    background: #fff;
+                    transform: translateY(-1px);
+                }
             }
         }
     }

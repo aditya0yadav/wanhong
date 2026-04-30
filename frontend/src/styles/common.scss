@@ -1,15 +1,15 @@
 :root {
   --main-width: 1300px;
-  --el-color-primary: rgb(49, 64, 144);
-  --el-color-primary-light-3: rgba(49, 64, 144, 0.7509803922);
-  --el-color-primary-light-5: rgba(49, 64, 144, 0.6509803922);
-  --el-color-primary-light-7: rgba(49, 64, 144, 0.5509803922);
-  --el-color-primary-light-8: rgba(49, 64, 144, 0.4509803922);
-  --el-color-primary-light-9: rgba(49, 64, 144, 0.2509803922);
-  --el-color-primary-dark-2: rgba(49, 64, 144, 0.8509803922);
+  --el-color-primary: #374E76;
+  --el-color-primary-light-3: #5c78a3;
+  --el-color-primary-light-5: #829ec9;
+  --el-color-primary-light-7: #a8c4f0;
+  --el-color-primary-light-8: #bbd7ff;
+  --el-color-primary-light-9: #d1e7ff;
+  --el-color-primary-dark-2: #283a58;
   --el-border-radius-base: 10px;
   --blur: 6px;
-  --main-color: rgb(49, 64, 144);
+  --main-color: #374E76;
   --t-color: #fff;
   --t-color-1: #cecac3;
   --t-color-2: #cecac3;
@@ -339,9 +339,9 @@ box-shadow: 0 0 0 1px var(--t-border-color)
   white-space: nowrap;
 }
 .v2-index-header {
-  height: 64px;
-  background: linear-gradient(90deg, #275b8f 0%, #3aa08a 100%);
-  color:#fff;
+  height: 90px;
+  background: linear-gradient(90deg, #ffffff 0%, #ffffff 35%, #374E76 100%);
+  color: #374E76; // Branded blue for left side text
   position: fixed;
   top:60px;
   right: 0;
@@ -355,7 +355,9 @@ box-shadow: 0 0 0 1px var(--t-border-color)
     height: 100%;
 
     .v2-index-header-logo {
-      height: 34px;
+      height: 70px;
+      width: auto;
+      object-fit: contain;
       cursor: pointer;
     }
     .v2-index-header-logo-right {
@@ -363,19 +365,27 @@ box-shadow: 0 0 0 1px var(--t-border-color)
       align-items: center;
     }
     .v2-index-header-box-right {
-      
+      color: #fff;
+      display: flex;
+      align-items: center;
+
       button {
         width: 100px;
         height: 42px;
-        background: #FCF2EA;
+        background: #374E76;
         border-radius: 6px;
-        border: 2px solid #FCF2EA;
+        border: none;
         cursor: pointer;
         outline: none;
         font-family: Lato-Heavy;
         font-size: 14px;
-        color: #ff8d32;
+        color: #fff;
         margin-right: 10px;
+        transition: all 0.2s;
+        &:hover {
+          background: #283a58;
+          transform: translateY(-1px);
+        }
       }
 
       .userinfo {
@@ -698,7 +708,7 @@ box-shadow: 0 0 0 1px var(--t-border-color)
 
 @media screen and (max-width: 768px) {
   .v2-index-header-logo {
-    height: 28px !important;
+    height: 44px !important;
   }
 
   .kaitai-main .main {

@@ -42,7 +42,7 @@ class SettingModel extends Model
     // 获取logo链接
     public function getLogoUrlAttr($value, $data)
     {
-        return $this['logo']['file_url'] ?? '';
+        return $this['logo']['file_url'] ?? '/assets/logo.png';
     }
 
     // 关联公众号二维码文件
