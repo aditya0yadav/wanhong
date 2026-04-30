@@ -1,0 +1,12 @@
+node_modules/
+vendor/
+dist/
+build/
+*.tar.gz
+*.zip
+.DS_Store
+backend/runtime/
+backend/public/storage/*
+!backend/public/storage/.gitignore
+.env
+.env.local

@@ -1,0 +1,437 @@
+SURVEY QUALIFICATIONS & QUOTA DETAILED ANALYSIS
+================================================
+
+FILE: survey-qualifications-quotas.json
+=======================================================================
+
+1. SURVEY QUALIFICATIONS DATA STRUCTURE
+=======================================================================
+
+The survey qualifications API (/api/member.Platform/offers) returns a JSON object with the following top-level structure:
+
+    {
+      "list": [array of survey objects],
+      "count": total number,
+      "show_quota": boolean,
+      "show_name": boolean,
+      "show_loi": boolean,
+      "show_ir": boolean,
+      "show_complete": boolean,
+      "show_click": boolean
+    }
+
+
+2. SURVEY OBJECT STRUCTURE (Inside "list" array)
+=======================================================================
+
+Each survey object in the "list" array contains 17 fields:
+
+    {
+      "project_id": 12345 [integer],
+      "project_pno": "PROJ-2024-001" [string - unique identifier],
+      "project_name": "Brand Awareness Study" [string],
+      "platform_id": 1 [integer],
+      "platform": {
+        "platform_id": 1 [integer],
+        "platform_name": "SurveyHub" [string],
+        "is_quota": 1 [integer - 0 or 1]
+      },
+      "code": "US" [string - 2-letter country code],
+      "project_cpi": 250 [integer - reward in cents or coins],
+      "project_quota": 1000 [integer - total needed responses],
+      "project_complete": 450 [integer - completed responses],
+      "project_loi": 15 [integer - duration in minutes],
+      "project_ir": 28 [integer - incidence rate 0-100],
+      "project_params": "[{...}]" [string - JSON array],
+      "create_time": "2024-01-15 10:30:00" [string - timestamp],
+      "update_time": "2024-03-25 14:15:30" [string - timestamp]
+    }
+
+
+3. EIGHT SURVEY QUALIFICATIONS IN DETAIL
+=======================================================================
+
+QF_001: QUOTA TOTAL (project_quota)
+    Type: Integer
+    Field Name: project_quota
+    What it contains: Maximum number of survey responses needed
+    Example: 1000
+    Format: Plain integer (no decimal)
+    Used for: Determining target respondent count
+    Calculation: Total quota remaining = project_quota - project_complete
+    Range: 1 to any positive integer
+    
+QF_002: QUOTA COMPLETED (project_complete)
+    Type: Integer
+    Field Name: project_complete
+    What it contains: Current number of completed survey responses
+    Example: 450
+    Format: Plain integer (no decimal)
+    Used for: Determining progress toward target
+    Calculation: Percentage filled = (project_complete / project_quota) * 100
+    Range: 0 to project_quota (can equal or exceed)
+    
+QF_003: SURVEY TITLE (project_name)
+    Type: String
+    Field Name: project_name
+    What it contains: Human-readable name of the survey
+    Example: "Brand Awareness Study - Tech Industry"
+    Format: Plain text string, may contain special characters
+    Used for: UI display, search, identification
+    Max length: Not specified in API
+    Can be empty: Not recommended
+    
+QF_004: COUNTRY CODE (code)
+    Type: String
+    Field Name: code
+    What it contains: ISO country code where survey is active
+    Example: "US" (United States)
+    Format: 2-letter alphabetic code
+    Used for: Geographic filtering, targeting
+    Common values: US, UK, CA, DE, FR, AU, IN, etc.
+    Case: Always uppercase
+    
+QF_005: DURATION (project_loi)
+    Type: Integer
+    Field Name: project_loi
+    What it contains: Expected time to complete survey in minutes
+    Example: 15
+    Format: Plain integer (no decimal)
+    Used for: Setting expectations, filtering
+    Typical range: 5 to 60 minutes
+    Display format: "15 minutes" or "15 min"
+    
+QF_006: INCIDENCE RATE (project_ir)
+    Type: Integer
+    Field Name: project_ir
+    What it contains: Percentage of survey starts that result in completion
+    Example: 28
+    Format: Plain integer (0-100)
+    Used for: Quality assessment, ROI calculation
+    Display format: "28%" in UI
+    Example interpretation: 28% of people who start will fully complete
+    
+QF_007: REWARD AMOUNT (project_cpi)
+    Type: Integer
+    Field Name: project_cpi
+    What it contains: Payment for completing one survey
+    Example: 250
+    Format: Plain integer (units are cents or coins system)
+    Unit system: Depends on user's currency preference
+    Conversion: If USD-based: divide by 100 to get dollar amount
+    Display examples: 
+        - Raw value: 250
+        - In cents: 250 cents = $2.50
+        - In coins: 250 coins
+    
+QF_008: CUSTOM QUALIFICATIONS (project_params)
+    Type: String (contains JSON array)
+    Field Name: project_params
+    What it contains: JSON-formatted string of survey requirements
+    Example: "[{\"name\":\"age_group\",\"value\":\"25-45\"},{\"name\":\"employment\",\"value\":\"Employed\"}]"
+    Format: Must be parsed with JSON.parse()
+    Structure after parsing:
+        [
+          { "name": "parameter_name", "value": "parameter_value" },
+          { "name": "another_param", "value": "its_value" }
+        ]
+    
+    Common parameter names and their meanings:
+        - age_group: Age bracket (e.g., "25-45", "18-65")
+        - gender: Gender identification (e.g., "Male/Female", "Any")
+        - employment: Employment status (e.g., "Employed Full-Time", "Self-Employed")
+        - income_level: Annual income bracket (e.g., "$75k-$150k", "£40k+")
+        - education: Education level (e.g., "Bachelor's+", "High School")
+        - location: Geographic area (e.g., "London, Manchester, Birmingham")
+        - industry: Business sector (e.g., "Technology", "Healthcare", "Retail")
+        - job_title: Job role (e.g., "Marketing Manager/Director", "Software Engineer")
+        - company_size: Organization size (e.g., "100+ employees", "10-50 employees")
+        - decision_maker: Decision-making authority (e.g., "Primary", "Secondary", "Yes")
+        - purchase_frequency: Buying frequency (e.g., "Monthly", "Weekly", "Quarterly")
+        - household_income: Home income (e.g., "£40k+")
+        - business_owner: Business ownership (e.g., "Yes", "No")
+    
+    Why important: Determines who qualifies to take the survey
+
+
+4. VISIBILITY CONTROL FLAGS DETAILED
+=======================================================================
+
+The response includes 6 boolean flags that control which columns appear in the UI:
+
+    show_quota: boolean
+        Controls: Display of quota status column
+        When true: Show "completed / total" format (e.g., "450 / 1000")
+        When false: Hide quota information from table view
+        Path: data.show_quota
+    
+    show_name: boolean
+        Controls: Display of project name column
+        When true: Show survey title
+        When false: Hide survey name from table view
+        Path: data.show_name
+    
+    show_loi: boolean
+        Controls: Display of Length of Interview column
+        When true: Show duration in minutes
+        When false: Hide duration information
+        Path: data.show_loi
+    
+    show_ir: boolean
+        Controls: Display of Incidence Rate column
+        When true: Show IR percentage
+        When false: Hide incidence rate
+        Path: data.show_ir
+    
+    show_complete: boolean
+        Controls: Display of completion count column
+        When true: Show how many have completed
+        When false: Hide completion numbers
+        Path: data.show_complete
+    
+    show_click: boolean
+        Controls: Display of click count column
+        When true: Show click statistics
+        When false: Hide click information
+        Path: data.show_click
+
+
+5. QUOTA DETAILS API (/api/member.Platform/quota)
+=======================================================================
+
+This endpoint returns detailed quota information for a specific survey.
+
+REQUEST:
+    URL: /api/member.Platform/quota
+    Method: GET
+    Parameter: project_pno (string - required)
+    Example: /api/member.Platform/quota?project_pno=PROJ-2024-001
+
+RESPONSE TYPES:
+
+Type 1: HTML Response
+    {
+      "type": "html",
+      "content": "<div class=\"quota-container\">...full HTML markup...</div>"
+    }
+    
+    Characteristics:
+        - Contains complete HTML markup with styling
+        - May include CSS inline styles
+        - Can have tables, lists, formatted text
+        - Displayed in modal using Vue's v-html directive
+        - Shows real-time quota breakdown
+        - Includes demographic requirements
+        - May show progress bars and visualizations
+    
+    Example content structure:
+        - Header with survey title
+        - Table showing: Target Quota, Currently Completed, Remaining Quota, Fill Rate
+        - Section for Target Demographics (age, gender, employment, income, etc.)
+        - Last updated timestamp
+        - Refresh frequency note (e.g., "refreshes every 30 minutes")
+
+Type 2: Link Response (External URL)
+    {
+      "type": "link",
+      "content": "https://quota-management-system.surveyhub.com/widget/quota-viewer?project_id=..."
+    }
+    
+    Characteristics:
+        - Contains external URL to third-party quota system
+        - Displayed in iframe within modal
+        - Manages quota through external partner
+        - URL may include authentication tokens
+        - Responsive design expected
+        - May support multiple languages
+    
+    Example URL patterns:
+        - https://quota-system.surveyhub.com/widget/quota-viewer?project_id=PROJ-001&token=abc123
+        - https://partner-system.questionbank.com/api/quota/display?survey=PROJ-002&key=xyz789
+
+
+6. RESPONSE HANDLING AND PARSING
+=======================================================================
+
+When fetching survey offers (/api/member.Platform/offers):
+    1. Response will always have "list" array
+    2. Each item in "list" is a complete survey object
+    3. "count" field tells total number of surveys
+    4. Check visibility flags to know which columns to display
+
+When parsing custom qualifications (project_params):
+    1. It's a STRING, not an object
+    2. Must use JSON.parse() to convert to array
+    3. After parsing, get array of {name, value} objects
+    4. If parsing fails, survey data is corrupted - handle gracefully
+    5. Empty or null value should be treated as no custom params
+
+When fetching quota details (/api/member.Platform/quota):
+    1. Use project_pno from survey object as parameter
+    2. Check "type" field to determine display method
+    3. If type is "html": insert content with v-html directive
+    4. If type is "link": load URL in iframe element
+    5. If request fails: check if platform.is_quota is true before showing error
+
+
+7. DATA TYPES AND FORMATS SUMMARY
+=======================================================================
+
+All fields in API responses use standard JSON data types:
+
+String fields (text):
+    - project_pno: "PROJ-2024-001"
+    - project_name: "Brand Awareness Study"
+    - code: "US"
+    - platform_name: "SurveyHub"
+    - create_time: "2024-01-15 10:30:00" (timestamp string)
+    - update_time: "2024-03-25 14:15:30" (timestamp string)
+    - project_params: "[{...}]" (JSON string)
+
+Integer fields (whole numbers):
+    - project_id: 12345
+    - platform_id: 1
+    - project_quota: 1000
+    - project_complete: 450
+    - project_cpi: 250
+    - project_loi: 15
+    - project_ir: 28
+    - is_quota: 1 (actually boolean but transmitted as 0 or 1)
+
+Boolean fields (true/false):
+    - show_quota: true
+    - show_name: true
+    - show_loi: true
+    - show_ir: true
+    - show_complete: true
+    - show_click: true
+
+Object fields:
+    - platform: {platform_id: int, platform_name: string, is_quota: 0|1}
+
+Array fields (after parsing):
+    - project_params (when parsed): [{name: string, value: string}, ...]
+
+
+8. IMPORTANT NOTES ON DATA RECEIVING AND PROCESSING
+=======================================================================
+
+Quota Calculation:
+    Remaining = project_quota - project_complete
+    Percentage Filled = (project_complete / project_quota) * 100
+    Percentage Remaining = 100 - Percentage Filled
+
+Currency Handling:
+    If project_cpi is 250:
+        - In cents system: $2.50 (divide by 100)
+        - In coins system: 250 coins (use directly)
+    Check platform configuration to determine which system is used
+
+JSON Parsing Safety:
+    When parsing project_params:
+        - Always wrap in try-catch block
+        - Invalid JSON will throw error
+        - If error occurs, treat as no custom qualifications
+        - Never display raw JSON string to user
+
+Timestamp Format:
+    Format: YYYY-MM-DD HH:mm:ss
+    Example: 2024-03-25 14:15:30
+    Timezone: Assumed UTC
+    For display: Parse and format based on user locale
+
+Null/Missing Values:
+    - project_params can be null or empty string: treat as []
+    - project_name should never be empty but validate anyway
+    - All integer fields should be >= 0
+    - Timestamps should follow expected format
+
+Validation Before Display:
+    - Check project_quota > 0
+    - Check project_complete <= project_quota (but handle overflow)
+    - Check project_loi > 0
+    - Check project_ir between 0-100
+    - Check project_cpi >= 0
+    - Validate project_params JSON if present
+    - Check platform.is_quota is 0 or 1
+
+
+9. COMMON PROCESSING SCENARIOS
+=======================================================================
+
+Scenario A: Display survey list with qualifications
+    1. Call: GET /api/member.Platform/offers?platform_id=1
+    2. Get response with list, count, and visibility flags
+    3. For each survey in list:
+        - Extract: project_name, project_quota, project_complete
+        - Calculate: remaining = project_quota - project_complete
+        - Parse: JSON.parse(project_params) to get requirements
+        - Check each visibility flag to decide what to display
+    4. Render table with appropriate columns
+
+Scenario B: Show detailed quota information
+    1. User clicks "Quota" link for specific survey
+    2. Check if survey.platform.is_quota == 1
+    3. If false: show message "No detailed quota available"
+    4. If true:
+        - Call: GET /api/member.Platform/quota?project_pno=PROJ-001
+        - Check response.type
+        - If "html": display content in modal <div v-html>
+        - If "link": display content in modal <iframe>
+    5. Handle loading state during fetch
+    6. Handle error state if fetch fails
+
+Scenario C: Filter by custom qualifications
+    1. For each survey, parse project_params
+    2. Extract parameter names and values
+    3. Build filter options from unique parameter values
+    4. Allow user to filter by selected requirements
+    5. Re-fetch with filter parameters in request
+
+Scenario D: Calculate survey metrics
+    1. Quota fill rate: (project_complete / project_quota) * 100
+    2. Quota remaining: project_quota - project_complete
+    3. Expected payout: (expected_respondents * project_cpi) / 100
+    4. Time estimate: respondents * project_loi
+    5. Success rate: respondents * (project_ir / 100)
+
+
+10. ERROR HANDLING IN DETAIL
+=======================================================================
+
+When fetchSurveyOffers fails:
+    - Platform may be temporarily unavailable
+    - User may not have permission to access surveys
+    - Platform ID might be invalid
+    - Network connection issue
+    Action: Show error message, log error, return empty list
+
+When fetchQuotaDetails fails:
+    - Project number might be invalid
+    - Platform quota system may be down
+    - User may not have permission
+    - Survey was deleted after initial fetch
+    Action: Check if is_quota == 1, show error if available but fetch fails
+
+When parsing project_params fails:
+    - Backend returned malformed JSON
+    - Data corruption in database
+    - Special characters not properly escaped
+    Action: Log error with survey ID, treat as no custom qualifications
+
+When responses are empty:
+    - No surveys available for platform
+    - User filter resulted in zero results
+    - Platform has no active surveys
+    Action: Show "No surveys available" message
+
+When data validation fails:
+    - Quota exceeded (completed > total)
+    - Invalid LOI or incidence rate
+    - Negative reward amount
+    - Missing required fields
+    Action: Log validation error, skip survey, continue with others
+
+
+END OF DETAILED ANALYSIS
+=======================================================================

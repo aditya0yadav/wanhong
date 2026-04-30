@@ -1,0 +1,6 @@
+{"platform_sign":"Innovatemr"}
+
+{"platform_sign":"MarketXcel"}
+
+{"platform_sign":"Notik"}
+

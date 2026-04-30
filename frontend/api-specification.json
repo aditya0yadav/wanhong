@@ -1,0 +1,802 @@
+{
+  "api_specification": {
+    "title": "Survey Qualification & Quota API Specification",
+    "version": "1.0",
+    "generated": "2026-03-25",
+    "base_url": "http://localhost:8000",
+    "scope": "API-only Documentation for Survey Qualifications and Quotas"
+  },
+
+  "endpoints": [
+    {
+      "id": "API-001",
+      "name": "Get Platform Offers with Qualifications",
+      "path": "/api/member.Platform/offers",
+      "method": "GET",
+      "description": "Fetches list of survey offers for a specific platform with complete qualification data",
+      "use_case": "Display all surveys and their requirements on platform detail page",
+      "survey_related": true,
+
+      "request": {
+        "parameters": [
+          {
+            "name": "page",
+            "type": "integer",
+            "required": false,
+            "default": 1,
+            "description": "Pagination page number"
+          },
+          {
+            "name": "limit",
+            "type": "integer",
+            "required": false,
+            "default": 20,
+            "description": "Number of items per page"
+          },
+          {
+            "name": "platform_id",
+            "type": "string|integer",
+            "required": true,
+            "description": "Platform identifier to fetch offers from"
+          },
+          {
+            "name": "search_field",
+            "type": "string",
+            "required": false,
+            "default": "project_name",
+            "description": "Field name to search",
+            "allowed_values": ["project_name", "project_pno", "code"]
+          },
+          {
+            "name": "search_exp",
+            "type": "string",
+            "required": false,
+            "default": "like",
+            "description": "Search expression type",
+            "allowed_values": ["like", "exact"]
+          },
+          {
+            "name": "sort_field",
+            "type": "string",
+            "required": false,
+            "default": "update_time",
+            "description": "Field to sort by",
+            "allowed_values": ["update_time", "create_time", "project_cpi"]
+          },
+          {
+            "name": "sort_value",
+            "type": "string",
+            "required": false,
+            "default": "desc",
+            "description": "Sort order",
+            "allowed_values": ["asc", "desc"]
+          },
+          {
+            "name": "date_field",
+            "type": "string",
+            "required": false,
+            "default": "create_time",
+            "description": "Date field for filtering"
+          },
+          {
+            "name": "code",
+            "type": "string",
+            "required": false,
+            "description": "Country code filter (e.g., 'US', 'UK')"
+          },
+          {
+            "name": "project_pno",
+            "type": "string",
+            "required": false,
+            "description": "Project number filter"
+          },
+          {
+            "name": "project_name",
+            "type": "string",
+            "required": false,
+            "description": "Project name search filter"
+          }
+        ]
+      },
+
+      "response": {
+        "success_code": 200,
+        "structure": {
+          "list": {
+            "type": "array",
+            "items": [
+              {
+                "field": "project_id",
+                "type": "integer",
+                "description": "Unique survey project identifier",
+                "example": 12345
+              },
+              {
+                "field": "project_pno",
+                "type": "string",
+                "description": "Project number (unique identifier for API calls)",
+                "example": "PROJ-2024-001"
+              },
+              {
+                "field": "project_name",
+                "type": "string",
+                "description": "Survey title/name displayed to users",
+                "example": "Customer Satisfaction Survey"
+              },
+              {
+                "field": "platform_id",
+                "type": "integer",
+                "description": "Associated platform ID",
+                "example": 1
+              },
+              {
+                "field": "platform",
+                "type": "object",
+                "description": "Platform details object",
+                "properties": {
+                  "platform_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "platform_name": {
+                    "type": "string",
+                    "example": "SurveyHub"
+                  },
+                  "is_quota": {
+                    "type": "integer",
+                    "enum": [0, 1],
+                    "description": "1 = has detailed quota endpoint, 0 = no detailed quota",
+                    "example": 1
+                  }
+                }
+              },
+              {
+                "field": "code",
+                "type": "string",
+                "description": "Country code qualification",
+                "example": "US"
+              },
+              {
+                "field": "project_cpi",
+                "type": "integer",
+                "description": "Cost Per Interview (reward in cents/coins)",
+                "unit": "cents",
+                "example": 150,
+                "note": "Divide by 100 for USD or use directly for coins"
+              },
+              {
+                "field": "project_quota",
+                "type": "integer",
+                "description": "Total quota (maximum participants needed)",
+                "qualification": true,
+                "example": 1000
+              },
+              {
+                "field": "project_complete",
+                "type": "integer",
+                "description": "Current completion count (already completed)",
+                "qualification": true,
+                "example": 450
+              },
+              {
+                "field": "project_loi",
+                "type": "integer",
+                "description": "Length of Interview in minutes",
+                "qualification": true,
+                "unit": "minutes",
+                "example": 15
+              },
+              {
+                "field": "project_ir",
+                "type": "integer",
+                "description": "Incidence Rate (completion probability percentage)",
+                "qualification": true,
+                "unit": "percent",
+                "example": 25
+              },
+              {
+                "field": "project_params",
+                "type": "string",
+                "description": "JSON string of custom survey qualifications",
+                "qualification": true,
+                "note": "Must be parsed with JSON.parse()",
+                "example": "[{\"name\":\"age_group\",\"value\":\"18-25\"},{\"name\":\"gender\",\"value\":\"Female\"}]"
+              },
+              {
+                "field": "create_time",
+                "type": "string",
+                "format": "YYYY-MM-DD HH:mm:ss",
+                "description": "Creation timestamp",
+                "example": "2024-01-15 10:30:00"
+              },
+              {
+                "field": "update_time",
+                "type": "string",
+                "format": "YYYY-MM-DD HH:mm:ss",
+                "description": "Last update timestamp",
+                "example": "2024-01-20 14:45:00"
+              }
+            ]
+          },
+          "count": {
+            "type": "integer",
+            "description": "Total count of offers (for pagination)",
+            "example": 150
+          },
+          "visibility_flags": {
+            "show_quota": {
+              "type": "boolean",
+              "description": "Display quota completion column",
+              "example": true
+            },
+            "show_name": {
+              "type": "boolean",
+              "description": "Display project name column",
+              "example": true
+            },
+            "show_loi": {
+              "type": "boolean",
+              "description": "Display Length of Interview column",
+              "example": true
+            },
+            "show_ir": {
+              "type": "boolean",
+              "description": "Display Incidence Rate column",
+              "example": true
+            },
+            "show_complete": {
+              "type": "boolean",
+              "description": "Display completion count column",
+              "example": true
+            },
+            "show_click": {
+              "type": "boolean",
+              "description": "Display click count column",
+              "example": true
+            }
+          }
+        }
+      },
+
+      "qualifications_returned": [
+        {
+          "qualification_id": "QF-001",
+          "name": "Quota Status",
+          "fields": ["project_quota", "project_complete"],
+          "calculation": "(project_complete / project_quota) * 100",
+          "display_format": "completed / total"
+        },
+        {
+          "qualification_id": "QF-002",
+          "name": "Project Name",
+          "fields": ["project_name"],
+          "display_format": "Text"
+        },
+        {
+          "qualification_id": "QF-003",
+          "name": "Country Code",
+          "fields": ["code"],
+          "display_format": "US, UK, DE, etc."
+        },
+        {
+          "qualification_id": "QF-004",
+          "name": "Length of Interview (LOI)",
+          "fields": ["project_loi"],
+          "unit": "minutes",
+          "display_format": "15 minutes"
+        },
+        {
+          "qualification_id": "QF-005",
+          "name": "Incidence Rate (IR)",
+          "fields": ["project_ir"],
+          "unit": "percent",
+          "display_format": "25%"
+        },
+        {
+          "qualification_id": "QF-006",
+          "name": "Completion Count",
+          "fields": ["project_complete"],
+          "display_format": "450"
+        },
+        {
+          "qualification_id": "QF-007",
+          "name": "Reward Amount",
+          "fields": ["project_cpi"],
+          "currency_note": "cents if USD, or coins if reward system",
+          "display_format": "150 coins or $1.50"
+        },
+        {
+          "qualification_id": "QF-008",
+          "name": "Custom Qualifications",
+          "fields": ["project_params"],
+          "type": "dynamic",
+          "examples": ["age_group: 18-25", "gender: Female", "employment: Employed"]
+        }
+      ],
+
+      "example_request": {
+        "url": "GET /api/member.Platform/offers?platform_id=1&page=1&limit=20&sort_field=update_time&sort_value=desc"
+      },
+
+      "example_response": {
+        "status": 200,
+        "data": {
+          "list": [
+            {
+              "project_id": 12345,
+              "project_pno": "PROJ-2024-001",
+              "project_name": "Brand Awareness Study",
+              "platform_id": 1,
+              "platform": {
+                "platform_id": 1,
+                "platform_name": "SurveyHub",
+                "is_quota": 1
+              },
+              "code": "US",
+              "project_cpi": 200,
+              "project_quota": 800,
+              "project_complete": 320,
+              "project_loi": 20,
+              "project_ir": 30,
+              "project_params": "[{\"name\":\"age\",\"value\":\"35-50\"},{\"name\":\"income\",\"value\":\"$75k+\"}]",
+              "create_time": "2024-02-01 09:00:00",
+              "update_time": "2024-02-15 16:30:00"
+            }
+          ],
+          "count": 47,
+          "show_quota": true,
+          "show_name": true,
+          "show_loi": true,
+          "show_ir": true,
+          "show_complete": true,
+          "show_click": true
+        }
+      },
+
+      "frontend_integration": {
+        "file": "src/views/platOffers.vue",
+        "function_name": "getData()",
+        "imports": [
+          "import { getOffers } from '@/api/modules/platform'"
+        ]
+      }
+    },
+
+    {
+      "id": "API-002",
+      "name": "Get Detailed Quota Information",
+      "path": "/api/member.Platform/quota",
+      "method": "GET",
+      "description": "Retrieves detailed quota status/information for a specific survey project",
+      "use_case": "Show comprehensive quota breakdown when user clicks 'Quota' button",
+      "survey_related": true,
+      "trigger": "User clicks 'Quota' link (only available if platform.is_quota == 1)",
+
+      "request": {
+        "parameters": [
+          {
+            "name": "project_pno",
+            "type": "string",
+            "required": true,
+            "description": "Project number from the offer (from API-001 response)",
+            "example": "PROJ-2024-001"
+          }
+        ]
+      },
+
+      "response": {
+        "success_code": 200,
+        "structure": {
+          "type": {
+            "type": "string",
+            "enum": ["html", "link"],
+            "description": "Content delivery type",
+            "details": {
+              "html": "HTML markup to be rendered directly in modal",
+              "link": "URL to be loaded in iframe"
+            }
+          },
+          "content": {
+            "type": "string",
+            "description": "Content payload (HTML or URL)",
+            "conditional": "Type-dependent - HTML string if type=html, URL if type=link"
+          }
+        }
+      },
+
+      "response_types": [
+        {
+          "type": "html",
+          "description": "HTML Response",
+          "example_response": {
+            "type": "html",
+            "content": "<div class=\"quota-container\"><h2>Quota Details</h2><table><tr><td>Target:</td><td>800</td></tr><tr><td>Completed:</td><td>320</td></tr><tr><td>Remaining:</td><td>480</td></tr></table><h3>Requirements</h3><ul><li>Age: 35-50</li><li>Income: $75k+</li><li>Own a business</li></ul></div>"
+          },
+          "rendering": "Display using v-html directive in Vue component",
+          "use_case": "When backend systems HTML quota details dynamically"
+        },
+        {
+          "type": "link",
+          "description": "External URL Response",
+          "example_response": {
+            "type": "link",
+            "content": "https://external-quota-system.example.com/survey/PROJ-2024-001"
+          },
+          "rendering": "Load in iframe element",
+          "use_case": "When third-party quota management system handles quota details"
+        }
+      ],
+
+      "example_request": {
+        "url": "GET /api/member.Platform/quota?project_pno=PROJ-2024-001"
+      },
+
+      "example_responses": [
+        {
+          "name": "HTML Type",
+          "status": 200,
+          "data": {
+            "type": "html",
+            "content": "<div style='padding: 20px;'><h2 style='color: #333;'>Survey Quota Status</h2><table style='width: 100%; border-collapse: collapse;'><tr style='background: #f5f5f5;'><td style='padding: 10px; border: 1px solid #ddd;'><strong>Total Quota</strong></td><td style='padding: 10px; border: 1px solid #ddd;'>800 respondents</td></tr><tr><td style='padding: 10px; border: 1px solid #ddd;'><strong>Completed</strong></td><td style='padding: 10px; border: 1px solid #ddd;'>320 respondents</td></tr><tr style='background: #ffffcc;'><td style='padding: 10px; border: 1px solid #ddd;'><strong>Remaining</strong></td><td style='padding: 10px; border: 1px solid #ddd; color: #d9534f; font-weight: bold;'>480 slots</td></tr></table><h3>Target Demographics</h3><ul><li>Age: 35-50</li><li>Annual Income: $75,000+</li><li>Business Owner</li><li>Decision Maker</li></ul><p style='margin-top: 20px; color: #999; font-size: 12px;'>Last Updated: 2024-02-15 16:30</p></div>"
+          }
+        },
+        {
+          "name": "Link Type",
+          "status": 200,
+          "data": {
+            "type": "link",
+            "content": "https://quota-api.surveyhub.com/widget/PROJ-2024-001?token=abc123"
+          }
+        }
+      ],
+
+      "frontend_integration": {
+        "file": "src/views/platOffers.vue",
+        "function_name": "toQuota(item)",
+        "imports": [
+          "import { getQuota } from '@/api/modules/platform'"
+        ],
+        "trigger_code": "scope.row.platform.is_quota == 1 && user clicks button"
+      }
+    },
+
+    {
+      "id": "API-003",
+      "name": "Get Platform List",
+      "path": "/api/member.Platform/list",
+      "method": "GET",
+      "description": "Retrieves list of all available survey platforms",
+      "use_case": "Display platform tiles on home page",
+      "survey_related": false,
+
+      "request": {
+        "parameters": []
+      },
+
+      "response": {
+        "success_code": 200,
+        "structure": {
+          "type": "array",
+          "items": [
+            {
+              "field": "platform_id",
+              "type": "integer",
+              "description": "Unique platform identifier",
+              "example": 1
+            },
+            {
+              "field": "platform_name",
+              "type": "string",
+              "description": "Platform display name",
+              "example": "SurveyHub"
+            },
+            {
+              "field": "platform_color",
+              "type": "string",
+              "format": "hex_color",
+              "description": "UI theme color in hex format",
+              "example": "#FF6B6B"
+            },
+            {
+              "field": "logo_url",
+              "type": "string",
+              "format": "url",
+              "description": "URL to platform logo image",
+              "example": "https://assets.example.com/surveyhub-logo.png"
+            },
+            {
+              "field": "is_wall",
+              "type": "integer",
+              "enum": [0, 1],
+              "description": "1 = display in discount wall section, 0 = hide",
+              "example": 1
+            },
+            {
+              "field": "is_list",
+              "type": "integer",
+              "enum": [0, 1],
+              "description": "1 = display in partner list section, 0 = hide",
+              "example": 1
+            }
+          ]
+        }
+      },
+
+      "example_response": {
+        "status": 200,
+        "data": [
+          {
+            "platform_id": 1,
+            "platform_name": "SurveyHub",
+            "platform_color": "#FF6B6B",
+            "logo_url": "https://assets.example.com/logos/surveyhub.png",
+            "is_wall": 1,
+            "is_list": 1
+          },
+          {
+            "platform_id": 2,
+            "platform_name": "QuestionBank",
+            "platform_color": "#4ECDC4",
+            "logo_url": "https://assets.example.com/logos/questionbank.png",
+            "is_wall": 0,
+            "is_list": 1
+          }
+        ]
+      },
+
+      "frontend_integration": {
+        "file": "src/views/offers.vue",
+        "imports": [
+          "import { getPlatformList } from '@/api/modules/platform'"
+        ]
+      }
+    },
+
+    {
+      "id": "API-004",
+      "name": "Get Featured Offers",
+      "path": "/api/member.Platform/featured",
+      "method": "GET",
+      "description": "Retrieves featured/trending survey offers",
+      "use_case": "Display featured surveys carousel on home page",
+      "survey_related": true,
+
+      "request": {
+        "parameters": []
+      },
+
+      "response": {
+        "success_code": 200,
+        "structure": {
+          "type": "array",
+          "items": [
+            {
+              "field": "project_id",
+              "type": "integer",
+              "example": 99
+            },
+            {
+              "field": "project_pno",
+              "type": "string",
+              "example": "FEAT-001"
+            },
+            {
+              "field": "project_name",
+              "type": "string",
+              "example": "High Reward Survey"
+            },
+            {
+              "field": "project_cpi",
+              "type": "integer",
+              "unit": "cents",
+              "example": 500
+            },
+            {
+              "field": "rating",
+              "type": "number",
+              "format": "0.0-5.0",
+              "example": 4.5
+            }
+          ]
+        }
+      },
+
+      "example_response": {
+        "status": 200,
+        "data": [
+          {
+            "project_id": 99,
+            "project_pno": "FEAT-001",
+            "project_name": "Premium Brand Survey",
+            "project_cpi": 500,
+            "rating": 4.8
+          },
+          {
+            "project_id": 100,
+            "project_pno": "FEAT-002",
+            "project_name": "Quick Feedback Survey",
+            "project_cpi": 150,
+            "rating": 4.5
+          }
+        ]
+      }
+    }
+  ],
+
+  "survey_qualifications_matrix": {
+    "description": "Complete matrix of all survey qualifications and their sources",
+    "qualifications": [
+      {
+        "id": "QF-001",
+        "name": "Quota Status",
+        "api_endpoint": "API-001",
+        "api_fields": ["project_quota", "project_complete"],
+        "type": "system",
+        "calculation": {
+          "remaining": "project_quota - project_complete",
+          "percentage_filled": "(project_complete / project_quota) * 100"
+        },
+        "display_format": "450 / 1000",
+        "importance": "CRITICAL",
+        "survey_specific": true
+      },
+      {
+        "id": "QF-002",
+        "name": "Survey Title",
+        "api_endpoint": "API-001",
+        "api_fields": ["project_name"],
+        "type": "text",
+        "display_format": "Project Name",
+        "importance": "HIGH",
+        "survey_specific": true
+      },
+      {
+        "id": "QF-003",
+        "name": "Country Geography",
+        "api_endpoint": "API-001",
+        "api_fields": ["code"],
+        "type": "location",
+        "allowed_values": ["US", "UK", "DE", "CA", "AU"],
+        "display_format": "US",
+        "importance": "HIGH",
+        "survey_specific": true
+      },
+      {
+        "id": "QF-004",
+        "name": "Duration (LOI)",
+        "api_endpoint": "API-001",
+        "api_fields": ["project_loi"],
+        "type": "duration",
+        "unit": "minutes",
+        "typical_range": "5-60",
+        "display_format": "15 mins",
+        "importance": "HIGH",
+        "survey_specific": true
+      },
+      {
+        "id": "QF-005",
+        "name": "Completion Rate (IR)",
+        "api_endpoint": "API-001",
+        "api_fields": ["project_ir"],
+        "type": "percentage",
+        "range": "0-100",
+        "display_format": "25%",
+        "importance": "MEDIUM",
+        "survey_specific": true
+      },
+      {
+        "id": "QF-006",
+        "name": "Reward Amount",
+        "api_endpoint": "API-001",
+        "api_fields": ["project_cpi"],
+        "type": "currency",
+        "unit": "cents or coins",
+        "display_format": "150 coins / $1.50",
+        "importance": "CRITICAL",
+        "survey_specific": true
+      },
+      {
+        "id": "QF-007",
+        "name": "Target Demographics",
+        "api_endpoint": "API-001",
+        "api_fields": ["project_params"],
+        "type": "custom_json",
+        "examples": [
+          "age_group: 18-25",
+          "gender: Female",
+          "employment: Employed",
+          "income_level: $50k-$100k"
+        ],
+        "parsing": "JSON.parse(project_params)",
+        "display_format": "Key-Value table",
+        "importance": "CRITICAL",
+        "survey_specific": true
+      },
+      {
+        "id": "QF-008",
+        "name": "Detailed Quotas",
+        "api_endpoint": "API-002",
+        "api_fields": ["type", "content"],
+        "type": "external",
+        "availability": "Only if platform.is_quota == 1",
+        "display_format": "Modal (HTML or iframe)",
+        "importance": "MEDIUM",
+        "survey_specific": true
+      }
+    ]
+  },
+
+  "survey_implementation_guide": {
+    "title": "Survey-Specific API Implementation",
+    "steps": [
+      {
+        "step": 1,
+        "phase": "Initialization",
+        "action": "Fetch platform list",
+        "api": "API-003",
+        "data_stored": "Available platforms with colors and logos"
+      },
+      {
+        "step": 2,
+        "phase": "Display Featured Surveys",
+        "action": "Load featured surveys",
+        "api": "API-004",
+        "data_stored": "High-reward surveys for carousel"
+      },
+      {
+        "step": 3,
+        "phase": "Load Survey Offers",
+        "action": "Fetch offers with qualifications",
+        "api": "API-001",
+        "data_stored": [
+          "Survey list with all 8 qualification fields",
+          "Visibility flags for column display",
+          "Custom parameter columns"
+        ],
+        "processing": "Parse project_params JSON for each survey"
+      },
+      {
+        "step": 4,
+        "phase": "Display Survey Details",
+        "action": "Show surveys with qualifications",
+        "qualifications_displayed": [
+          "QF-001: Quota status (450/1000)",
+          "QF-002: Survey name",
+          "QF-003: Country code",
+          "QF-004: Duration (LOI)",
+          "QF-005: Completion rate (IR)",
+          "QF-006: Reward amount",
+          "QF-007: Target demographics"
+        ]
+      },
+      {
+        "step": 5,
+        "phase": "Quota Details",
+        "action": "Fetch detailed quota on user click",
+        "api": "API-002",
+        "condition": "Only if platform.is_quota == 1",
+        "display": "HTML content or external URL in modal"
+      }
+    ]
+  },
+
+  "survey_data_flow": {
+    "entry_point": "src/views/offers.vue",
+    "flow": [
+      {
+        "component": "offers.vue",
+        "calls": [
+          { "api": "API-004", "stores": "featured surveys" },
+          { "api": "API-003", "stores": "platform list" }
+        ]
+      },
+      {
+        "component": "platOffers.vue",
+        "calls": [
+          { "api": "API-001", "stores": "survey list with all qualifications" },
+          { "api": "API-002", "stores": "detailed quota (on demand)" }
+        ]
+      }
+    ]
+  }
+}

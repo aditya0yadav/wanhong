@@ -1,0 +1,299 @@
+{
+  "timestamp": "2026-03-25T08:48:02.703Z",
+  "apiEndpoints": [
+    {
+      "id": "EP-001",
+      "name": "Platform Offers with Qualifications",
+      "url": "/api/member.Platform/offers",
+      "method": "GET",
+      "file": "src/api/modules/platform.js",
+      "line": 8,
+      "loadingIndicator": false,
+      "parameters": [
+        "page",
+        "limit",
+        "platform_id",
+        "search_field",
+        "search_exp",
+        "sort_field",
+        "sort_value",
+        "code",
+        "project_pno",
+        "project_name"
+      ],
+      "responseFields": [
+        "list[].project_pno",
+        "list[].project_name",
+        "list[].project_quota",
+        "list[].project_complete",
+        "list[].project_loi",
+        "list[].project_ir",
+        "list[].project_cpi",
+        "show_quota",
+        "show_name",
+        "show_loi",
+        "show_ir",
+        "show_complete",
+        "show_click",
+        "count"
+      ],
+      "criticality": "CRITICAL",
+      "usedIn": [
+        "platOffers.vue"
+      ]
+    },
+    {
+      "id": "EP-002",
+      "name": "Detailed Quota Retrieval",
+      "url": "/api/member.Platform/quota",
+      "method": "GET",
+      "file": "src/api/modules/platform.js",
+      "line": 24,
+      "loadingIndicator": false,
+      "parameters": [
+        "project_pno"
+      ],
+      "responseFields": [
+        "type (link|html)",
+        "content"
+      ],
+      "criticality": "CRITICAL",
+      "usedIn": [
+        "platOffers.vue"
+      ],
+      "riskFlags": [
+        "XSS_VULNERABILITY",
+        "NO_ERROR_HANDLING"
+      ]
+    },
+    {
+      "id": "EP-003",
+      "name": "Platform List",
+      "url": "/api/member.Platform/list",
+      "method": "GET",
+      "file": "src/api/modules/platform.js",
+      "line": 3,
+      "loadingIndicator": false,
+      "parameters": [],
+      "responseFields": [
+        "platform_id",
+        "platform_name",
+        "is_wall",
+        "is_list"
+      ],
+      "criticality": "HIGH",
+      "usedIn": [
+        "offers.vue"
+      ],
+      "optimization": "NO_CACHING"
+    },
+    {
+      "id": "EP-004",
+      "name": "Featured Offers",
+      "url": "/api/member.Platform/featured",
+      "method": "GET",
+      "file": "src/api/modules/platform.js",
+      "line": 11,
+      "loadingIndicator": false,
+      "parameters": [],
+      "responseFields": [
+        "project_pno",
+        "project_name",
+        "project_cpi"
+      ],
+      "criticality": "MEDIUM",
+      "usedIn": [
+        "offers.vue"
+      ]
+    }
+  ],
+  "codeIssues": [
+    {
+      "id": "CQ-001",
+      "severity": "CRITICAL",
+      "file": "src/views/platOffers.vue",
+      "line": 102,
+      "issue": "XSS Vulnerability - Unescaped HTML",
+      "code": "<div class=\"html\" v-html=\"quota\"></div>",
+      "problem": "User-supplied HTML rendered without sanitization",
+      "impact": "Remote code execution, session hijacking",
+      "fix": "Use DOMPurify.sanitize(quota)",
+      "estimatedTime": "1 hour"
+    },
+    {
+      "id": "CQ-002",
+      "severity": "HIGH",
+      "file": "src/views/platOffers.vue",
+      "line": 230,
+      "issue": "Missing Error Handler",
+      "code": "getQuota(...).then(res => { ... })",
+      "problem": "No .catch() block for failed API calls",
+      "impact": "Loading state stuck indefinitely on error",
+      "fix": "Add .catch(err => { quotaLoading.value = false; ... })",
+      "estimatedTime": "30 minutes"
+    },
+    {
+      "id": "CQ-003",
+      "severity": "HIGH",
+      "file": "src/views/platOffers.vue",
+      "line": 275,
+      "issue": "Unhandled JSON Parsing Exception",
+      "code": "JSON.parse(item.project_params)",
+      "problem": "Invalid JSON will throw and crash component",
+      "impact": "All offers on page fail to display",
+      "fix": "Wrap in try-catch block",
+      "estimatedTime": "30 minutes"
+    },
+    {
+      "id": "CQ-004",
+      "severity": "HIGH",
+      "file": "src/views/platOffers.vue",
+      "line": 258,
+      "issue": "Missing Error Handler on getData",
+      "code": "getOffers(query.value).then(res => { ... })",
+      "problem": "No .catch() for failed getOffers call",
+      "impact": "Loading state stuck, data not updated",
+      "fix": "Add .catch() and update loading state",
+      "estimatedTime": "30 minutes"
+    },
+    {
+      "id": "CQ-005",
+      "severity": "MEDIUM",
+      "file": "src/views/platOffers.vue",
+      "line": 162,
+      "issue": "Debug Console Output",
+      "code": "console.log(route)",
+      "problem": "Debug logs expose route params to users",
+      "impact": "Information disclosure",
+      "fix": "Remove all console.log statements",
+      "estimatedTime": "15 minutes"
+    },
+    {
+      "id": "CQ-006",
+      "severity": "MEDIUM",
+      "file": "src/views/offers.vue",
+      "line": 45,
+      "issue": "Missing Error Handler on getPlatformList",
+      "code": "getPlatformList().then(res => { ... })",
+      "problem": "No .catch() handler",
+      "impact": "Page stuck in loading state on API failure",
+      "fix": "Add .catch(() => { loading.value = false })",
+      "estimatedTime": "15 minutes"
+    },
+    {
+      "id": "CQ-007",
+      "severity": "LOW",
+      "file": "src/views/platOffers.vue",
+      "line": 233,
+      "issue": "Memory Leak Potential",
+      "code": "nextTick(() => { ... })",
+      "problem": "No cleanup if component unmounts during async operation",
+      "impact": "Potential memory leak on page navigation",
+      "fix": "Use effect cleanup or check component mounted state",
+      "estimatedTime": "1 hour"
+    }
+  ],
+  "securityVulnerabilities": [
+    {
+      "id": "VULN-001",
+      "cveType": "CWE-79: Improper Neutralization of Input During Web Page Generation",
+      "severity": "CRITICAL",
+      "cvss": "9.8",
+      "location": "src/views/platOffers.vue:102-110",
+      "description": "Cross-Site Scripting (XSS) via quota HTML content",
+      "vulnerability": "\nThe application renders quota content using Vue's v-html directive without sanitization:\n  <div class=\"html\" v-html=\"quota\"></div>\n\nIf the /api/member.Platform/quota endpoint returns malicious HTML payload, \nit will be executed in the user's browser context.",
+      "exploitScenario": "\nAttacker compromises backend or intercepts API response:\n  Response: { type: \"html\", content: \"<img src=x onerror='fetch(\"/api/steal-session\")'>\" }\nResult: Session token exfiltrated to attacker's server",
+      "remediation": "\n1. npm install dompurify\n2. import DOMPurify from 'dompurify';\n3. quota.value = DOMPurify.sanitize(data.content);",
+      "references": [
+        "OWASP TOP 10 A3 - Injection",
+        "CVE-2020-5551"
+      ]
+    },
+    {
+      "id": "VULN-002",
+      "cveType": "CWE-391: Unchecked Error Condition",
+      "severity": "HIGH",
+      "cvss": "7.5",
+      "location": "src/views/platOffers.vue:275",
+      "description": "Unhandled JSON parsing exception",
+      "vulnerability": "\nJSON.parse() can throw SyntaxError if project_params contains invalid JSON:\n  item.project_params = item.project_params ? JSON.parse(item.project_params) : [];\n\nIf one offer has corrupted JSON, entire page rendering fails.",
+      "exploitScenario": "\nBackend stores invalid JSON in project_params:\n  project_params = '{\"invalid\": json syntax}'\nException thrown → Component crashes → User cannot access any offers",
+      "remediation": "\ntry {\n  item.project_params = item.project_params ? JSON.parse(item.project_params) : [];\n} catch(e) {\n  console.error('Invalid project_params', e);\n  item.project_params = [];\n}",
+      "references": [
+        "OWASP - Input Validation"
+      ]
+    },
+    {
+      "id": "VULN-003",
+      "cveType": "CWE-252: Unchecked Return Value",
+      "severity": "MEDIUM",
+      "cvss": "6.5",
+      "location": "src/views/platOffers.vue:230-247",
+      "description": "Missing Promise error handling",
+      "vulnerability": "\ngetQuota() promise has no .catch() handler. If API fails:\n  getQuota({ project_pno }).then(res => { ... })\n  \nquotaLoading state remains true indefinitely.",
+      "exploitScenario": "\nNetwork error or server returns 500:\n→ User sees infinite loading spinner\n→ User cannot close modal or interact with page\n→ Browser tab becomes potentially unresponsive",
+      "remediation": "\n.catch(err => {\n  quotaLoading.value = false;\n  ElMessage.error('Failed to load quota details');\n})",
+      "references": [
+        "OWASP - Denial of Service"
+      ]
+    },
+    {
+      "id": "VULN-004",
+      "cveType": "CWE-532: Insertion of Sensitive Information into Log File",
+      "severity": "LOW",
+      "cvss": "4.3",
+      "location": "src/views/platOffers.vue:162",
+      "description": "Sensitive data exposed in console logs",
+      "vulnerability": "\nconsole.log(route) exposes route parameters and query strings:\n  - platform_id\n  - user identification data\n  - potential authentication tokens",
+      "exploitScenario": "\nUser shares screenshot of browser console\n→ Attacker gains access to routing structure\n→ Information useful for further attacks",
+      "remediation": "Remove all console.log statements in production code.\nUse proper logging library with log levels.",
+      "references": [
+        "OWASP - Sensitive Data Exposure"
+      ]
+    }
+  ],
+  "performanceIssues": [
+    {
+      "id": "PERF-001",
+      "category": "Memory Usage",
+      "severity": "MEDIUM",
+      "issue": "Large payload per page load",
+      "current": "20 items × (JSON parsing + custom params processing)",
+      "impact": "Higher memory usage, slower initial render",
+      "recommendation": "Implement virtual scrolling (vue-virtual-scroller)",
+      "estimatedImprovement": "30% memory reduction"
+    },
+    {
+      "id": "PERF-002",
+      "category": "API Calls",
+      "severity": "MEDIUM",
+      "issue": "No caching for getPlatformList()",
+      "current": "Called fresh on every page load",
+      "impact": "Unnecessary network request, slower perceived perf",
+      "recommendation": "Cache response in Pinia store with 5-minute TTL",
+      "estimatedImprovement": "500ms faster page load"
+    },
+    {
+      "id": "PERF-003",
+      "category": "Rendering",
+      "severity": "LOW",
+      "issue": "No lazy loading for quota modal",
+      "current": "Full modal component loaded even if not used",
+      "impact": "Slight increase in bundle size",
+      "recommendation": "Use dynamic import for quota modal",
+      "estimatedImprovement": "50KB bundle reduction"
+    }
+  ],
+  "summary": {
+    "totalIssuesFound": 14,
+    "apiEndpointsAnalyzed": 4,
+    "codeIssues": 7,
+    "criticalIssues": 1,
+    "highPriorityIssues": 3,
+    "securityVulnerabilities": 4,
+    "performanceIssues": 3,
+    "estimatedRemediationTime": "6-8 hours",
+    "qualificationFieldsIdentified": 8,
+    "visibilityControlledQualifications": 6
+  }
+}

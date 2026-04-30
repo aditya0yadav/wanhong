@@ -1,0 +1,248 @@
+{
+  "survey_qualifications_data": {
+    "api_response_format": "GET /api/member.Platform/offers",
+    "timestamp": "2026-03-25T14:30:00Z",
+    "data": {
+      "list": [
+        {
+          "project_id": 12345,
+          "project_pno": "PROJ-2024-001",
+          "project_name": "Brand Awareness Study - Tech Industry",
+          "platform_id": 1,
+          "platform": {
+            "platform_id": 1,
+            "platform_name": "SurveyHub",
+            "is_quota": 1
+          },
+          "code": "US",
+          "project_cpi": 250,
+          "project_quota": 1000,
+          "project_complete": 450,
+          "project_loi": 15,
+          "project_ir": 28,
+          "project_params": "[{\"name\":\"age_group\",\"value\":\"25-45\"},{\"name\":\"gender\",\"value\":\"Male/Female\"},{\"name\":\"employment\",\"value\":\"Employed Full-Time\"},{\"name\":\"income_level\",\"value\":\"$75k-$150k\"},{\"name\":\"industry\",\"value\":\"Technology\"}]",
+          "create_time": "2024-01-15 10:30:00",
+          "update_time": "2024-03-25 14:15:30"
+        },
+        {
+          "project_id": 12346,
+          "project_pno": "PROJ-2024-002",
+          "project_name": "Consumer Behavior Research",
+          "platform_id": 1,
+          "platform": {
+            "platform_id": 1,
+            "platform_name": "SurveyHub",
+            "is_quota": 1
+          },
+          "code": "UK",
+          "project_cpi": 180,
+          "project_quota": 800,
+          "project_complete": 320,
+          "project_loi": 20,
+          "project_ir": 32,
+          "project_params": "[{\"name\":\"age_group\",\"value\":\"18-65\"},{\"name\":\"gender\",\"value\":\"Any\"},{\"name\":\"location\",\"value\":\"London, Manchester, Birmingham\"},{\"name\":\"household_income\",\"value\":\"£40k+\"},{\"name\":\"purchase_frequency\",\"value\":\"Monthly\"}]",
+          "create_time": "2024-02-01 09:00:00",
+          "update_time": "2024-03-24 16:45:20"
+        },
+        {
+          "project_id": 12347,
+          "project_pno": "PROJ-2024-003",
+          "project_name": "Digital Marketing Investment Survey",
+          "platform_id": 2,
+          "platform": {
+            "platform_id": 2,
+            "platform_name": "QuestionBank",
+            "is_quota": 0
+          },
+          "code": "CA",
+          "project_cpi": 320,
+          "project_quota": 500,
+          "project_complete": 480,
+          "project_loi": 25,
+          "project_ir": 45,
+          "project_params": "[{\"name\":\"job_title\",\"value\":\"Marketing Manager/Director\"},{\"name\":\"company_size\",\"value\":\"100+ employees\"},{\"name\":\"budget_responsibility\",\"value\":\"Yes\"},{\"name\":\"decision_maker\",\"value\":\"Primary/Secondary\"}]",
+          "create_time": "2024-02-20 08:30:00",
+          "update_time": "2024-03-25 12:00:00"
+        }
+      ],
+      "count": 150,
+      "show_quota": true,
+      "show_name": true,
+      "show_loi": true,
+      "show_ir": true,
+      "show_complete": true,
+      "show_click": true
+    }
+  },
+  "quota_details_format": {
+    "endpoint": "GET /api/member.Platform/quota",
+    "parameter": "project_pno",
+
+      {
+        "scenario": "Link Response Type",
+        "project_pno": "PROJ-2024-002",
+        "type": "link",
+        "content": "https://quota-management-system.surveyhub.com/widget/quota-viewer?project_id=PROJ-2024-002&token=abc123def456&mode=embedded&lang=en"
+      },
+      {
+        "scenario": "Link Response Type (Alternative)",
+        "project_pno": "PROJ-2024-003",
+        "type": "link",
+        "content": "https://partner-system.questionbank.com/api/quota/display?survey=PROJ-2024-003&key=xyz789uvw123&format=responsive"
+      }
+    ]
+  },
+  "qualification_fields_breakdown": {
+    "QF_001": {
+      "field_name": "project_quota",
+      "qualification_type": "Quota Total",
+      "data_type": "integer",
+      "description": "Total number of survey responses needed",
+      "example_value": 1000,
+      "unit": "participants",
+      "format_in_response": "integer",
+      "api_path": "data.list[].project_quota"
+    },
+    "QF_002": {
+      "field_name": "project_complete",
+      "qualification_type": "Quota Completed",
+      "data_type": "integer",
+      "description": "Number of completed survey responses",
+      "example_value": 450,
+      "unit": "participants",
+      "format_in_response": "integer",
+      "api_path": "data.list[].project_complete"
+    },
+    "QF_003": {
+      "field_name": "project_name",
+      "qualification_type": "Survey Title",
+      "data_type": "string",
+      "description": "Name of the survey project",
+      "example_value": "Brand Awareness Study - Tech Industry",
+      "format_in_response": "text/string",
+      "api_path": "data.list[].project_name"
+    },
+    "QF_004": {
+      "field_name": "code",
+      "qualification_type": "Country Code",
+      "data_type": "string",
+      "description": "Country code where survey is being conducted",
+      "example_value": "US",
+      "format_in_response": "2-letter country code",
+      "allowed_values": ["US", "UK", "CA", "DE", "FR", "AU", "IN"],
+      "api_path": "data.list[].code"
+    },
+    "QF_005": {
+      "field_name": "project_loi",
+      "qualification_type": "Length of Interview (LOI)",
+      "data_type": "integer",
+      "description": "Expected time to complete survey in minutes",
+      "example_value": 15,
+      "unit": "minutes",
+      "format_in_response": "integer",
+      "typical_range": "5-60 minutes",
+      "api_path": "data.list[].project_loi"
+    },
+    "QF_006": {
+      "field_name": "project_ir",
+      "qualification_type": "Incidence Rate (IR)",
+      "data_type": "integer",
+      "description": "Percentage of started surveys that are completed",
+      "example_value": 28,
+      "unit": "percentage (0-100)",
+      "format_in_response": "integer",
+      "api_path": "data.list[].project_ir"
+    },
+    "QF_007": {
+      "field_name": "project_cpi",
+      "qualification_type": "Cost Per Interview (Reward)",
+      "data_type": "integer",
+      "description": "Payment given for completing survey",
+      "example_value": 250,
+      "unit": "cents or coins",
+      "format_in_response": "integer",
+      "conversion": "divide by 100 for USD amount",
+      "api_path": "data.list[].project_cpi"
+    },
+    "QF_008": {
+      "field_name": "project_params",
+      "qualification_type": "Custom Qualifications",
+      "data_type": "string (JSON array)",
+      "description": "Specific demographic and behavioral requirements",
+      "example_value": "[{\"name\":\"age_group\",\"value\":\"25-45\"},{\"name\":\"employment\",\"value\":\"Employed Full-Time\"}]",
+      "format_in_response": "JSON string - must be parsed with JSON.parse()",
+      "item_structure": {
+        "name": "qualification parameter name",
+        "value": "qualification parameter value"
+      },
+      "common_parameters": [
+        "age_group",
+        "gender",
+        "employment",
+        "income_level",
+        "education",
+        "location",
+        "industry",
+        "job_title",
+        "company_size",
+        "decision_maker"
+      ],
+      "api_path": "data.list[].project_params"
+    }
+  },
+  "visibility_flags_format": {
+    "show_quota": {
+      "type": "boolean",
+      "description": "Display quota column (completed/total) in UI",
+      "example_value": true,
+      "api_path": "data.show_quota"
+    },
+    "show_name": {
+      "type": "boolean",
+      "description": "Display project name column in UI",
+      "example_value": true,
+      "api_path": "data.show_name"
+    },
+    "show_loi": {
+      "type": "boolean",
+      "description": "Display Length of Interview column in UI",
+      "example_value": true,
+      "api_path": "data.show_loi"
+    },
+    "show_ir": {
+      "type": "boolean",
+      "description": "Display Incidence Rate column in UI",
+      "example_value": true,
+      "api_path": "data.show_ir"
+    },
+    "show_complete": {
+      "type": "boolean",
+      "description": "Display completion count column in UI",
+      "example_value": true,
+      "api_path": "data.show_complete"
+    },
+    "show_click": {
+      "type": "boolean",
+      "description": "Display click count column in UI",
+      "example_value": true,
+      "api_path": "data.show_click"
+    }
+  },
+  "data_format_summary": {
+    "survey_list_response": {
+      "total_fields": 17,
+      "qualification_fields": 8,
+      "nested_object": "platform",
+      "custom_json_field": "project_params",
+      "timestamp_fields": 2,
+      "visibility_control_fields": 6
+    },
+    "quota_details_response": {
+      "possible_types": ["html", "link"],
+      "html_type_characteristics": "Full HTML markup with styling, displayed in modal using v-html",
+      "link_type_characteristics": "External URL, displayed in iframe within modal",
+      "content_max_length": "no documented limit",
+      "includes_realtime_data": true
+    }
+  }
+}

@@ -1,0 +1,648 @@
+{
+  "audit_metadata": {
+    "report_id": "QUAL_QUOTA_AUDIT_2024",
+    "generated_date": "2024-01-25",
+    "system": "Questionnaire Survey Frontend",
+    "version": "1.0",
+    "scope": "Qualification and Quota Fetching Mechanism"
+  },
+  
+  "api_endpoints": {
+    "qualifications": {
+      "endpoint_id": "EP-001",
+      "name": "Platform Offers with Qualifications",
+      "url": "/api/member.Platform/offers",
+      "method": "GET",
+      "file_location": "src/api/modules/platform.js:8-10",
+      "loading_indicator": false,
+      "request_parameters": {
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "description": "Pagination page number"
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "description": "Items per page"
+        },
+        "platform_id": {
+          "type": "string|integer",
+          "required": true,
+          "description": "Platform identifier"
+        },
+        "search_field": {
+          "type": "string",
+          "default": "project_name",
+          "description": "Field to search in"
+        },
+        "search_exp": {
+          "type": "string",
+          "enum": ["like", "exact"],
+          "default": "like",
+          "description": "Search expression type"
+        },
+        "sort_field": {
+          "type": "string",
+          "enum": ["update_time", "create_time", "project_cpi"],
+          "default": "update_time",
+          "description": "Field to sort by"
+        },
+        "sort_value": {
+          "type": "string",
+          "enum": ["asc", "desc"],
+          "default": "desc",
+          "description": "Sort order"
+        },
+        "date_field": {
+          "type": "string",
+          "default": "create_time",
+          "description": "Date field for filtering"
+        },
+        "code": {
+          "type": "string",
+          "optional": true,
+          "description": "Country code filter"
+        },
+        "project_pno": {
+          "type": "string",
+          "optional": true,
+          "description": "Project number filter"
+        },
+        "project_name": {
+          "type": "string",
+          "optional": true,
+          "description": "Project name filter"
+        }
+      },
+      "response_structure": {
+        "list": {
+          "type": "array",
+          "items": {
+            "project_id": { "type": "integer" },
+            "project_pno": { "type": "string", "description": "Project number" },
+            "project_name": { "type": "string", "description": "Survey title" },
+            "platform_id": { "type": "integer" },
+            "platform": {
+              "type": "object",
+              "properties": {
+                "platform_id": { "type": "integer" },
+                "platform_name": { "type": "string" },
+                "is_quota": { "type": "integer", "enum": [0, 1], "description": "Has detailed quota" }
+              }
+            },
+            "code": { "type": "string", "description": "Country code" },
+            "project_cpi": { "type": "integer", "description": "Reward in cents/coins" },
+            "project_quota": { "type": "integer", "description": "Total quota positions" },
+            "project_complete": { "type": "integer", "description": "Completed positions" },
+            "project_loi": { "type": "integer", "description": "Length of interview in minutes" },
+            "project_ir": { "type": "integer", "description": "Incidence rate percentage" },
+            "project_params": { "type": "string", "description": "JSON string of custom parameters" },
+            "create_time": { "type": "string", "format": "datetime" },
+            "update_time": { "type": "string", "format": "datetime" }
+          }
+        },
+        "count": { "type": "integer", "description": "Total count of offers" },
+        "show_quota": { "type": "boolean", "description": "Display quota column" },
+        "show_name": { "type": "boolean", "description": "Display name column" },
+        "show_loi": { "type": "boolean", "description": "Display LOI column" },
+        "show_ir": { "type": "boolean", "description": "Display IR column" },
+        "show_complete": { "type": "boolean", "description": "Display completion column" },
+        "show_click": { "type": "boolean", "description": "Display click count column" }
+      }
+    },
+    "quota": {
+      "endpoint_id": "EP-002",
+      "name": "Detailed Quota Information",
+      "url": "/api/member.Platform/quota",
+      "method": "GET",
+      "file_location": "src/api/modules/platform.js:24-26",
+      "loading_indicator": false,
+      "request_parameters": {
+        "project_pno": {
+          "type": "string",
+          "required": true,
+          "description": "Project number from selected offer"
+        }
+      },
+      "response_structure": {
+        "type": {
+          "type": "string",
+          "enum": ["link", "html"],
+          "description": "Content type to display"
+        },
+        "content": {
+          "type": "string",
+          "description": "URL (if type=link) or HTML markup (if type=html)"
+        }
+      },
+      "response_examples": [
+        {
+          "type": "link",
+          "content": "https://example.com/quota/survey123"
+        },
+        {
+          "type": "html",
+          "content": "<h2>Quota Details</h2><p>Age: 18-25</p><p>Remaining: 250/500</p>"
+        }
+      ]
+    },
+    "platform_list": {
+      "endpoint_id": "EP-003",
+      "name": "Platform List",
+      "url": "/api/member.Platform/list",
+      "method": "GET",
+      "file_location": "src/api/modules/platform.js:3-5",
+      "loading_indicator": false,
+      "request_parameters": {},
+      "response_structure": {
+        "type": "array",
+        "items": {
+          "platform_id": { "type": "integer" },
+          "platform_name": { "type": "string" },
+          "platform_color": { "type": "string", "format": "hex_color" },
+          "logo_url": { "type": "string", "format": "url" },
+          "is_wall": { "type": "integer", "enum": [0, 1] },
+          "is_list": { "type": "integer", "enum": [0, 1] }
+        }
+      }
+    },
+    "featured": {
+      "endpoint_id": "EP-004",
+      "name": "Featured Offers",
+      "url": "/api/member.Platform/featured",
+      "method": "GET",
+      "file_location": "src/api/modules/platform.js:11-13",
+      "loading_indicator": false
+    }
+  },
+
+  "qualification_fields": {
+    "QF-001": {
+      "name": "Quota Status",
+      "database_field": "project_quota, project_complete",
+      "frontend_field": "show_quota",
+      "display_format": "200/500",
+      "component": "el-table-column",
+      "prop": "project_quota",
+      "min_width": 130,
+      "visibility_controlled": true,
+      "control_flag": "show_quota"
+    },
+    "QF-002": {
+      "name": "Project Name",
+      "database_field": "project_name",
+      "frontend_field": "show_name",
+      "display_format": "Text",
+      "component": "el-table-column",
+      "prop": "project_name",
+      "visibility_controlled": true,
+      "control_flag": "show_name"
+    },
+    "QF-003": {
+      "name": "Country Code",
+      "database_field": "code",
+      "frontend_field": "code",
+      "display_format": "US, UK, DE",
+      "component": "el-table-column",
+      "prop": "code",
+      "min_width": 120
+    },
+    "QF-004": {
+      "name": "LOI (Length of Interview)",
+      "database_field": "project_loi",
+      "frontend_field": "show_loi",
+      "display_format": "Integer (minutes)",
+      "component": "el-table-column",
+      "prop": "project_loi",
+      "visibility_controlled": true,
+      "control_flag": "show_loi"
+    },
+    "QF-005": {
+      "name": "IR (Incidence Rate)",
+      "database_field": "project_ir",
+      "frontend_field": "show_ir",
+      "display_format": "0-100 percentage",
+      "component": "el-table-column",
+      "prop": "project_ir",
+      "visibility_controlled": true,
+      "control_flag": "show_ir"
+    },
+    "QF-006": {
+      "name": "Completion Status",
+      "database_field": "project_complete",
+      "frontend_field": "show_complete",
+      "display_format": "Integer count",
+      "component": "el-table-column",
+      "prop": "project_complete",
+      "visibility_controlled": true,
+      "control_flag": "show_complete"
+    },
+    "QF-007": {
+      "name": "Reward Amount",
+      "database_field": "project_cpi",
+      "frontend_field": "display always",
+      "display_format": "Currency (coins or USD)",
+      "component": "el-table-column",
+      "prop": "project_cpi",
+      "min_width": 120,
+      "visibility_controlled": false,
+      "currency_conversion": {
+        "field_name": "project_cpi",
+        "base_unit": "cents",
+        "display_formats": ["coins (direct)", "USD (project_cpi / usd_rate)"]
+      }
+    },
+    "QF-008": {
+      "name": "Custom Qualifications",
+      "database_field": "project_params",
+      "frontend_field": "dynamically generated",
+      "display_format": "Key-Value pairs",
+      "component": "el-table-column (v-for)",
+      "data_structure": [
+        {
+          "name": "qualification_name",
+          "value": "qualification_value"
+        }
+      ],
+      "processing": "JSON.parse(project_params)",
+      "example": [
+        {
+          "name": "age_group",
+          "value": "18-25"
+        },
+        {
+          "name": "gender",
+          "value": "Female"
+        },
+        {
+          "name": "income_level",
+          "value": "$50k-$100k"
+        }
+      ]
+    }
+  },
+
+  "quota_handling": {
+    "QH-001": {
+      "trigger": "User clicks 'Quota' button on offer row",
+      "component": "platOffers.vue",
+      "function": "toQuota(item)",
+      "file_location": "src/views/platOffers.vue:220-247",
+      "condition": "platform.is_quota == 1",
+      "api_call": "getQuota({ project_pno: item.project_pno })",
+      "endpoint": "/api/member.Platform/quota",
+      "flow": [
+        {
+          "step": 1,
+          "action": "Set quotaVisible = true",
+          "state_variable": "quotaVisible"
+        },
+        {
+          "step": 2,
+          "action": "Set quotaLoading = true",
+          "state_variable": "quotaLoading"
+        },
+        {
+          "step": 3,
+          "action": "Set modal title to project_name",
+          "state_variable": "quotaTitle"
+        },
+        {
+          "step": 4,
+          "action": "Call getQuota API",
+          "endpoint": "/api/member.Platform/quota",
+          "params": { "project_pno": "string" }
+        },
+        {
+          "step": 5,
+          "action": "Check response type",
+          "condition": "data.type == 'link' || 'html'"
+        },
+        {
+          "step": 6,
+          "action": "Set quota content",
+          "state_variable": "quota",
+          "note": "Sets to data.content (URL or HTML)"
+        },
+        {
+          "step": 7,
+          "action": "Render in modal",
+          "render_type": "iframe (if link) or v-html (if html)"
+        }
+      ],
+      "modal_configuration": {
+        "width": "1200",
+        "height": "600px",
+        "title": "quotaTitle (project_name)",
+        "closeable": true,
+        "close_on_escape": false,
+        "close_on_modal_click": false,
+        "align": "center"
+      }
+    }
+  },
+
+  "data_flow_analysis": {
+    "entry_point": {
+      "component": "offers.vue",
+      "path": "src/views/offers.vue",
+      "functions": [
+        {
+          "name": "getFeatured()",
+          "endpoint": "/api/member.Platform/featured",
+          "stores_in": "features.value"
+        },
+        {
+          "name": "getPlatformList()",
+          "endpoint": "/api/member.Platform/list",
+          "stores_in": "listings classified as walls or lists",
+          "processing": "Filters by is_wall and is_list"
+        }
+      ]
+    },
+    "detail_view": {
+      "component": "platOffers.vue",
+      "path": "src/views/platOffers.vue",
+      "router_params": {
+        "platform_id": "from route.params.id",
+        "name": "from route.query.name"
+      },
+      "initialization": {
+        "function": "getData()",
+        "line": 258,
+        "calls": [
+          {
+            "name": "getOffers(query)",
+            "endpoint": "/api/member.Platform/offers",
+            "parameters": {
+              "platform_id": "route.params.id",
+              "page": "1",
+              "limit": "20",
+              "sort_field": "update_time",
+              "sort_value": "desc"
+            }
+          }
+        ]
+      },
+      "response_processing": {
+        "function": "getData() - lines 258-277",
+        "steps": [
+          {
+            "step": 1,
+            "action": "Extract list from response.data.list"
+          },
+          {
+            "step": 2,
+            "action": "Set visibility flags from response",
+            "flags": [
+              "show_quota",
+              "show_name",
+              "show_loi",
+              "show_ir",
+              "show_complete",
+              "show_click"
+            ]
+          },
+          {
+            "step": 3,
+            "action": "Parse project_params JSON",
+            "code": "JSON.parse(item.project_params)",
+            "note": "Required for custom qualifications"
+          },
+          {
+            "step": 4,
+            "action": "Extract first item's params as column headers",
+            "note": "Used for dynamic table columns"
+          }
+        ]
+      }
+    }
+  },
+
+  "security_analysis": {
+    "vulnerabilities": [
+      {
+        "id": "VULN-001",
+        "type": "XSS (Cross-Site Scripting)",
+        "severity": "HIGH",
+        "location": "platOffers.vue:102-110",
+        "code_snippet": "<div class=\"html\" v-html=\"quota\"></div>",
+        "issue": "Quota HTML content is rendered without sanitization",
+        "affected_path": "/api/member.Platform/quota with type='html'",
+        "risk": "Malicious HTML/JS in quota.content can execute in user's browser",
+        "proof_of_concept": {
+          "quota_response": {
+            "type": "html",
+            "content": "<img src=x onerror=\"alert('XSS')\">"
+          }
+        },
+        "impact": "Session hijacking, credential theft, malware distribution",
+        "remediation": {
+          "option1": "Use HTML sanitization library",
+          "library": "DOMPurify",
+          "example": "import DOMPurify from 'dompurify'; quota.value = DOMPurify.sanitize(data.content);"
+        }
+      },
+      {
+        "id": "VULN-002",
+        "type": "Unhandled Exception",
+        "severity": "MEDIUM",
+        "location": "platOffers.vue:275",
+        "code_snippet": "JSON.parse(item.project_params)",
+        "issue": "JSON.parse can throw if project_params is invalid JSON",
+        "risk": "Parsing error will crash component for all offers on page",
+        "remediation": {
+          "approach": "Wrap in try-catch",
+          "example": "try { item.project_params = JSON.parse(item.project_params); } catch(e) { item.project_params = []; }"
+        }
+      },
+      {
+        "id": "VULN-003",
+        "type": "Missing Error Handling",
+        "severity": "MEDIUM",
+        "location": "platOffers.vue:230-247",
+        "function": "toQuota()",
+        "issue": "No .catch() for getQuota() promise",
+        "risk": "If API fails, quotaLoading stays true, user sees spinning loader",
+        "remediation": {
+          "approach": "Add error handler",
+          "example": ".catch(err => { quotaLoading.value = false; ElMessage.error('Failed to load quota'); })"
+        }
+      },
+      {
+        "id": "VULN-004",
+        "type": "Information Disclosure",
+        "severity": "LOW",
+        "location": "All API calls",
+        "console_logs": true,
+        "issue": "Debug console.log() statements visible to users",
+        "example": "console.log(route) in platOffers.vue",
+        "risk": "Route params and query strings exposed in console"
+      }
+    ],
+    "recommendations": [
+      {
+        "priority": "CRITICAL",
+        "action": "Implement HTML sanitization",
+        "files": ["src/views/platOffers.vue"],
+        "estimated_effort": "1 hour"
+      },
+      {
+        "priority": "HIGH",
+        "action": "Add error handling to all API calls",
+        "files": ["src/views/platOffers.vue", "src/views/offers.vue"],
+        "estimated_effort": "2 hours"
+      },
+      {
+        "priority": "HIGH",
+        "action": "Wrap JSON.parse in try-catch",
+        "files": ["src/views/platOffers.vue"],
+        "estimated_effort": "30 minutes"
+      },
+      {
+        "priority": "MEDIUM",
+        "action": "Remove console.log statements",
+        "files": ["src/views/platOffers.vue", "src/views/offers.vue"],
+        "estimated_effort": "30 minutes"
+      }
+    ]
+  },
+
+  "performance_analysis": {
+    "concerns": [
+      {
+        "id": "PERF-001",
+        "issue": "Large payload per page",
+        "current_state": "20 items per page with JSON.parse for each item",
+        "impact": "Memory usage, parsing time",
+        "recommendation": "Consider pagination optimization"
+      },
+      {
+        "id": "PERF-002",
+        "issue": "No caching for platform list",
+        "current_state": "getPlatformList() called without caching",
+        "impact": "Unnecessary API calls on every page load",
+        "recommendation": "Cache in Pinia store with TTL"
+      },
+      {
+        "id": "PERF-003",
+        "issue": "No virtual scrolling",
+        "current_state": "el-table renders all 20 items at once",
+        "impact": "Potential lag with many columns",
+        "recommendation": "Implement virtual scroller for large tables"
+      }
+    ]
+  },
+
+  "implementation_checklist": {
+    "security_fixes": [
+      {
+        "task": "Add DOMPurify to project",
+        "status": "pending",
+        "command": "npm install dompurify"
+      },
+      {
+        "task": "Sanitize quota HTML content",
+        "file": "src/views/platOffers.vue",
+        "location": "toQuota() function",
+        "status": "pending"
+      },
+      {
+        "task": "Add error handling to getQuota",
+        "file": "src/views/platOffers.vue",
+        "status": "pending"
+      },
+      {
+        "task": "Add error handling to getOffers",
+        "file": "src/views/platOffers.vue",
+        "status": "pending"
+      },
+      {
+        "task": "Wrap JSON.parse in try-catch",
+        "file": "src/views/platOffers.vue",
+        "line": 275,
+        "status": "pending"
+      },
+      {
+        "task": "Remove debug console.log statements",
+        "file": "src/views/platOffers.vue",
+        "status": "pending"
+      }
+    ],
+    "testing": [
+      {
+        "test_case": "Valid quota response - type=link",
+        "expected": "Should display iframe with quota URL"
+      },
+      {
+        "test_case": "Valid quota response - type=html",
+        "expected": "Should display HTML content (sanitized)"
+      },
+      {
+        "test_case": "Invalid quota response",
+        "expected": "Should show error message, reset loading state"
+      },
+      {
+        "test_case": "Malformed project_params JSON",
+        "expected": "Should handle gracefully, custom params empty"
+      },
+      {
+        "test_case": "Slow API response (>5s)",
+        "expected": "Should allow user to close modal without freeze"
+      },
+      {
+        "test_case": "XSS payload in quota content",
+        "expected": "Should sanitize, no script execution"
+      }
+    ]
+  },
+
+  "file_references": {
+    "components": [
+      {
+        "file": "src/views/offers.vue",
+        "purpose": "Entry point for survey offers system",
+        "key_functions": ["getFeatured", "getPlatformList"],
+        "data_structures": ["features", "walls", "lists"]
+      },
+      {
+        "file": "src/views/platOffers.vue",
+        "purpose": "Platform-specific offers with qualifications and quotas",
+        "key_functions": ["getData", "toQuota", "getQuota"],
+        "data_structures": ["tableData", "quota", "showQuota", "customParams"]
+      },
+      {
+        "file": "src/api/modules/platform.js",
+        "purpose": "Platform API endpoints",
+        "exports": [
+          "getPlatformList",
+          "getOffers",
+          "getFeatured",
+          "getQuota",
+          "getOfferLink",
+          "getWallLink"
+        ]
+      }
+    ],
+    "stores": [
+      {
+        "file": "src/stores/modules/user.js",
+        "provides": ["userInfo", "sys", "hb (currency)", "lang (language)", "auth_api_urls"]
+      }
+    ]
+  },
+
+  "summary": {
+    "total_qualifications": 8,
+    "total_api_endpoints": 4,
+    "qualifications_with_visibility_control": 6,
+    "security_issues_found": 4,
+    "critical_issues": 1,
+    "high_priority_issues": 2,
+    "missing_error_handlers": 2,
+    "xss_vulnerabilities": 1,
+    "json_parsing_risks": 1,
+    "estimated_remediation_time": "4 hours"
+  }
+}

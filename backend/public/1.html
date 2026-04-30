@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Solana钱包连接</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(160deg, #0f0824 0%, #1a093d 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            padding: 20px;
+            max-width: 100%;
+        }
+        
+        /* 顶部导航 */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(16, 10, 42, 0.9);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #2a1b57;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            font-size: 28px;
+            color: #9945FF;
+        }
+        
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #9945FF 0%, #14F195 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .connect-btn {
+            background: linear-gradient(90deg, #9945FF 0%, #14F195 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(153, 69, 255, 0.3);
+        }
+        
+        .connect-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(153, 69, 255, 0.4);
+        }
+        
+        .connect-btn:disabled {
+            background: linear-gradient(90deg, #555 0%, #777 100%);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* 主内容区域 */
+        .main-content {
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .app-icon {
+            width: 120px;
+            height: 120px;
+            border-radius: 25px;
+            background: linear-gradient(135deg, #9945FF 0%, #14F195 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(153, 69, 255, 0.4);
+        }
+        
+        .app-icon i {
+            font-size: 60px;
+            color: white;
+        }
+        
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #9945FF 0%, #14F195 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            text-align: center;
+            color: #c5b7e6;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            max-width: 320px;
+        }
+        
+        /* 功能卡片 */
+        .features {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 30px;
+        }
+        
+        .feature-card {
+            background: rgba(42, 27, 87, 0.5);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:active {
+            background: rgba(42, 27, 87, 0.8);
+        }
+        
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(153, 69, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .feature-icon i {
+            font-size: 20px;
+            color: #9945FF;
+        }
+        
+        .feature-text h3 {
+            font-size: 18px;
+            margin-bottom: 4px;
+            color: #14F195;
+        }
+        
+        .feature-text p {
+            font-size: 14px;
+            color: #c5b7e6;
+        }
+        
+        /* 连接状态 */
+        .connection-status {
+            width: 100%;
+            max-width: 400px;
+            background: rgba(42, 27, 87, 0.5);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .status-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+        
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(42, 27, 87, 0.8);
+            padding: 12px 20px;
+            border-radius: 50px;
+            margin-bottom: 20px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff4757;
+        }
+        
+        .connected .status-dot {
+            background: #14F195;
+        }
+        
+        .wallet-info {
+            text-align: left;
+            background: rgba(42, 27, 87, 0.8);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .wallet-info p {
+            margin: 10px 0;
+            font-size: 14px;
+            word-break: break-all;
+        }
+        
+        /* 通知 */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            padding: 15px 20px;
+            border-radius: 50px;
+            background: #14F195;
+            color: #0f0824;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            text-align: center;
+            max-width: 80%;
+        }
+        
+        .notification.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .notification.error {
+            background: #ff4757;
+            color: white;
+        }
+        
+        /* 底部信息 */
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #8875b5;
+            font-size: 14px;
+        }
+        
+        /* 加载动画 */
+        .loader {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            display: inline-block;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 380px) {
+            .title {
+                font-size: 24px;
+            }
+            
+            .subtitle {
+                font-size: 14px;
+            }
+            
+            .connect-btn {
+                padding: 10px 16px;
+                font-size: 14px;
+            }
+            
+            .feature-card {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="notification" id="notification"></div>
+    
+    <div class="header">
+        <div class="logo">
+            <i class="logo-icon fas fa-wallet"></i>
+            <div class="logo-text">Solana Wallet</div>
+        </div>
+        <button id="connectButton" class="connect-btn">
+            <i class="fas fa-plug"></i>
+            <span>连接钱包</span>
+        </button>
+    </div>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="app-icon">
+                <i class="fas fa-coins"></i>
+            </div>
+            
+            <h1 class="title">Solana钱包连接</h1>
+            <p class="subtitle">安全连接您的Solana钱包，体验高速、低成本的区块链交易</p>
+            
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="feature-text">
+                        <h3>高速交易</h3>
+                        <p>每秒超过50,000笔交易处理能力</p>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div class="feature-text">
+                        <h3>低成本</h3>
+                        <p>交易费用低于0.00001美元</p>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="feature-text">
+                        <h3>安全可靠</h3>
+                        <p>行业领先的安全协议</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="connection-status">
+                <h3 class="status-title">连接状态</h3>
+                <div id="status" class="status">
+                    <div class="status-dot"></div>
+                    <span>未连接</span>
+                </div>
+                
+                <div id="walletInfo" class="wallet-info">
+                    <p><strong>已连接地址:</strong> <span id="walletAddress"></span></p>
+                    <p><strong>网络:</strong> <span id="network">Solana Mainnet</span></p>
+                    <p><strong>余额:</strong> <span id="balance">0</span> SOL</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>© 2023 Solana钱包连接 - 专为移动端优化</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const connectButton = document.getElementById('connectButton');
+            const statusElement = document.getElementById('status');
+            const walletInfoElement = document.getElementById('walletInfo');
+            const walletAddressElement = document.getElementById('walletAddress');
+            const balanceElement = document.getElementById('balance');
+            const notification = document.getElementById('notification');
+            
+            // 显示通知
+            function showNotification(message, isError = false) {
+                notification.textContent = message;
+                notification.classList.add('show');
+                if (isError) {
+                    notification.classList.add('error');
+                } else {
+                    notification.classList.remove('error');
+                }
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+            
+            // 检查是否在OKX环境中
+            function isOKXEnvironment() {
+                return typeof window.okxwallet !== 'undefined' && 
+                       typeof window.okxwallet.solana !== 'undefined';
+            }
+            
+            // 初始化检查
+            if (!isOKXEnvironment()) {
+                connectButton.disabled = true;
+                connectButton.innerHTML = '<i class="fas fa-exclamation-triangle"></i><span>未找到钱包</span>';
+                showNotification('请在OKX应用中打开此页面', true);
+                return;
+            }
+            
+            // 检查是否已经连接
+            async function checkConnected() {
+                try {
+                    const isConnected = await window.okxwallet.solana.isConnected();
+                    if (isConnected) {
+                        const account = await window.okxwallet.solana.connect();
+                        updateUI(account.publicKey.toString());
+                    }
+                } catch (error) {
+                    console.error('检查连接状态时出错:', error);
+                }
+            }
+            
+            // 更新UI显示连接成功
+            function updateUI(address) {
+                statusElement.classList.add('connected');
+                statusElement.innerHTML = '<div class="status-dot"></div><span>已连接</span>';
+                
+                // 缩短地址显示
+                const shortAddress = `${address.substring(0, 6)}...${address.substring(address.length - 6)}`;
+                walletAddressElement.textContent = shortAddress;
+                walletInfoElement.style.display = 'block';
+                
+                connectButton.innerHTML = '<i class="fas fa-check"></i><span>已连接</span>';
+                connectButton.disabled = true;
+                
+                // 获取余额（模拟）
+                const balance = (Math.random() * 10).toFixed(4);
+                balanceElement.textContent = balance;
+                
+                showNotification('钱包连接成功！');
+            }
+            
+            // 连接钱包功能
+            connectButton.addEventListener('click', async () => {
+                try {
+                    if (!isOKXEnvironment()) {
+                        showNotification('请确保OKX钱包可用', true);
+                        return;
+                    }
+                    
+                    connectButton.innerHTML = '<span class="loader"></span><span>连接中...</span>';
+                    connectButton.disabled = true;
+                    
+                    // 请求连接
+                    const account = await window.okxwallet.solana.connect();
+                    updateUI(account.publicKey.toString());
+                    
+                } catch (error) {
+                    console.error('连接钱包失败:', error);
+                    connectButton.innerHTML = '<i class="fas fa-plug"></i><span>连接钱包</span>';
+                    connectButton.disabled = false;
+                    
+                    if (error.code === 4001) {
+                        showNotification('您拒绝了连接请求', true);
+                    } else {
+                        showNotification('连接失败: ' + (error.message || '未知错误'), true);
+                    }
+                }
+            });
+            
+            // 初始化检查连接状态
+            checkConnected();
+            
+            // 监听账户变化
+            if (isOKXEnvironment()) {
+                window.okxwallet.solana.on('accountChanged', (publicKey) => {
+                    if (publicKey) {
+                        // 重新连接
+                        updateUI(publicKey.toString());
+                    } else {
+                        // 断开连接
+                        statusElement.classList.remove('connected');
+                        statusElement.innerHTML = '<div class="status-dot"></div><span>未连接</span>';
+                        walletInfoElement.style.display = 'none';
+                        connectButton.innerHTML = '<i class="fas fa-plug"></i><span>连接钱包</span>';
+                        connectButton.disabled = false;
+                        showNotification('钱包已断开连接');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
