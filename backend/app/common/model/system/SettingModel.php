@@ -42,7 +42,7 @@ class SettingModel extends Model
     // 获取logo链接
     public function getLogoUrlAttr()
     {
-        return $this['logo']['file_url'] ?? '/assets/logo.png';
+        return '';
     }
 
     // 关联登录背景文件
