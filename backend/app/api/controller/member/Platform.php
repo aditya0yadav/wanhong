@@ -72,7 +72,7 @@ class Platform extends BaseController
 			$where['project_name'] = ['project_name', '=', $param['project_name']];
 		}
 		$where[] = ['platform_id', '=', $param['platform_id']];
-		$where[] = where_disdel();
+		$where = where_disdel($where);
 		$data = ProjectService::list($where, $this->page(), $this->limit(), $this->order(), 'project_pno,project_name,project_code,project_cpi,project_currency,project_loi,project_ir,create_time,update_time,sort,platform_id,project_params,project_quota,project_complete');
 		$member_id = member_id(true);
 		$team_id = member_team_id(true);

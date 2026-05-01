@@ -324,8 +324,6 @@ class Pull extends Command
                 ]);
                 $response = curl_exec($curl);
                 $err = curl_error($curl);
-                //file_put_contents(__DIR__.'/Gowebsurveys_callback.txt',__FUNCTION__.':'.date('Y-m-d H:i:s')."\n",8);
-                //file_put_contents(__DIR__.'/Gowebsurveys_callback.txt',$response."\n\n",8);
                 curl_close($curl);
                 if ($err) {
                     return error('Pull failed');

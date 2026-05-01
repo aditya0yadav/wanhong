@@ -80,7 +80,7 @@
                                     </el-dropdown>
                                     <a href="javascript:;" v-if="scope.row.platform.is_quota == 1"
                                         @click="toQuota(scope.row)" style="margin-right:10px;font-size:14px;">{{
-                                        $t('offers.quota') }}</a>
+                                            $t('offers.quota') }}</a>
                                     <a href="javascript:;" @click="start(scope.row)"
                                         style="margin-right:10px;font-size:14px;">{{ $t('offers.start')
                                         }}</a>
@@ -101,7 +101,7 @@
                             <div class="offer-card-reward">
                                 <template v-if="hb == 'coins'">
                                     <img src="../assets/coin.svg" style="width:14px;margin-right:3px;" />{{
-                                    row.project_cpi }}
+                                        row.project_cpi }}
                                 </template>
                                 <template v-else>$ {{ (row.project_cpi / sys.usd_rate).toFixed(2) }}</template>
                             </div>
@@ -112,7 +112,7 @@
                             <span class="meta-chip" v-if="showLoi">LOI: {{ row.project_loi }}</span>
                             <span class="meta-chip" v-if="showIr">IR: {{ row.project_ir }}</span>
                             <span class="meta-chip" v-if="showQuota">{{ row.project_complete }}/{{ row.project_quota
-                                }}</span>
+                            }}</span>
                         </div>
                         <div class="offer-card-actions">
                             <button class="oc-btn" @click="start(row)">{{ $t('offers.start') }}</button>
@@ -128,8 +128,8 @@
                         layout="prev, pager, next" :current-page="query.page" :total="total" class="mt-4" />
                 </div>
             </div>
-            <el-dialog :title="quotaTitle" :close-on-press-escape="false" :close-on-click-modal="false" class="offerbox quota-dialog"
-                v-model="quotaVisible" width="900" align-center>
+            <el-dialog :title="quotaTitle" :close-on-press-escape="false" :close-on-click-modal="false"
+                class="offerbox quota-dialog" v-model="quotaVisible" width="900" align-center>
 
                 <div style="height:3px;">
                     <el-progress stroke-width="3" v-if="quotaLoading" :percentage="80" :indeterminate="true"
@@ -160,7 +160,7 @@
                                     <div v-if="hb == 'coins'"
                                         style="display:flex;align-items:center;justify-content: center;">
                                         <img src="../assets/coin.svg" style="width:20px;margin-right:5px;">{{
-                                        structuredQuota?.surveyCPI }}
+                                            structuredQuota?.surveyCPI }}
                                     </div>
                                     <div v-if="hb == 'usd'">$ {{ structuredQuota?.surveyCPI }}</div>
                                 </div>
@@ -171,7 +171,7 @@
                         <div class="meta-bar" v-if="structuredQuota?.surveyID">
                             <div class="meta-tag">ID: {{ structuredQuota.surveyID }}</div>
                             <div class="meta-desc" v-if="structuredQuota?.projectBrief">{{ structuredQuota.projectBrief
-                                }}</div>
+                            }}</div>
                         </div>
 
                         <!-- Progress -->
@@ -530,7 +530,9 @@ const fetchOffers = () => {
     tableData.value = [];
     loading.value = true;
     getOffers(query.value).then(res => {
+        console.log('[DEBUG] getOffers Response:', res);
         const data = res.data.list;
+        console.log('[DEBUG] Survey List Data:', data);
         showQuota.value = res.data.show_quota ? true : false;
         showName.value = res.data.show_name ? true : false;
         showLoi.value = res.data.show_loi ? true : false;
@@ -1381,7 +1383,7 @@ table {
     :deep(.quota-dialog) {
         width: 95% !important;
         margin-top: 5vh !important;
-        
+
         .el-dialog__body {
             padding: 16px;
             max-height: 85vh;

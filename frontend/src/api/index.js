@@ -8,7 +8,7 @@ import router from "@/router";
 const config = {
   // 默认地址请求地址
   // baseURL: 'http',
-  baseURL: window.location.protocol + '//' + window.location.hostname + '',
+  baseURL: 'http://wanhongsurvey.com',
   // 设置超时时间
   timeout: 300000,
   headers: {},
