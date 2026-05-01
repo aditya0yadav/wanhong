@@ -12,7 +12,7 @@ return [
     // 调试模式
     'app_debug'        => env('app.debug', true),
     // 应用地址
-    'app_host'         => 'wanhongsurvey.com:8080',
+    'app_host'         => 'wanhongsurvey.com',
     // 应用Trace调试
     'app_trace'        => env('app.trace', false),
     // 应用的命名空间
