@@ -9,7 +9,7 @@
   --el-color-primary-dark-2: #283a58;
   --el-border-radius-base: 10px;
   --blur: 6px;
-  --main-color: #374E76;
+  --main-color: rgb(49, 64, 144);
   --t-color: #fff;
   --t-color-1: #cecac3;
   --t-color-2: #cecac3;
@@ -339,11 +339,12 @@ box-shadow: 0 0 0 1px var(--t-border-color)
   white-space: nowrap;
 }
 .v2-index-header {
-  height: 90px;
-  background: linear-gradient(90deg, #ffffff 0%, #ffffff 35%, #374E76 100%);
-  color: #374E76; // Branded blue for left side text
+  height: 64px;
+  background: linear-gradient(90deg, #275b8f 0%, #3aa08a 100%);
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   position: fixed;
-  top:60px;
+  top: 0;
   right: 0;
   left: 0;
   z-index: 100;
@@ -355,10 +356,12 @@ box-shadow: 0 0 0 1px var(--t-border-color)
     height: 100%;
 
     .v2-index-header-logo {
-      height: 70px;
+      height: 40px;
       width: auto;
       object-fit: contain;
       cursor: pointer;
+      margin-left: 10px;
+      filter: brightness(0) invert(1);
     }
     .v2-index-header-logo-right {
       display: inline-flex;
@@ -618,17 +621,25 @@ box-shadow: 0 0 0 1px var(--t-border-color)
    HEADER - BALANCE CHIP
    ============================================= */
 .balance-chip {
-  padding: 6px 10px 6px 12px;
-  min-width: 60px;
-  background-color: rgb(52, 71, 93);
+  padding: 6px 14px;
+  min-width: 80px;
+  background: rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   border-radius: 30px;
   margin: 0 0 0 15px;
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 700;
   color: #fff;
   white-space: nowrap;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+  }
 }
 
 /* =============================================
@@ -770,7 +781,7 @@ box-shadow: 0 0 0 1px var(--t-border-color)
   }
 
   &.active {
-    background: linear-gradient(90deg, rgba(49,64,144,0.55) 0%, rgba(58,160,138,0.35) 100%);
+    background: var(--main-color);
     color: #fff;
     img { opacity: 1; }
   }

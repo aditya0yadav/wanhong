@@ -8,34 +8,29 @@
                 </div>
 
                 <!-- Desktop Nav -->
-                <div class="sidebar-content desktop-only">
-                    <div v-if="userInfo.auth_api_urls && userInfo.auth_api_urls.includes('api/member.Platform/offers')"
-                        :class="['item', route.name === 'offers' || route.meta.activeMenu === 'offers' ? 'active' : '']"
+                <div class="sidebar-content desktop-only" v-if="token">
+                    <div :class="['item', route.name === 'offers' || route.meta.activeMenu === 'offers' ? 'active' : '']"
                         @click="turnToPage('offers')">
-                        <img src="../assets/offers-choose.svg" />
+                        <img src="../assets/offers-choose.svg" class="nav-icon" />
                         <div class="tit">{{ $t('nav.offers') }}</div>
                     </div>
-                    <div v-if="userInfo.auth_api_urls && userInfo.auth_api_urls.includes('api/member.Team/ranking')"
-                        :class="['item', route.name === 'leaderboard' || route.meta.activeMenu === 'leaderboard' ? 'active' : '']"
+                    <div :class="['item', route.name === 'leaderboard' || route.meta.activeMenu === 'leaderboard' ? 'active' : '']"
                         @click="turnToPage('daily', true)">
-                        <img src="../assets/leaderboard-choose.svg" />
+                        <img src="../assets/leaderboard-choose.svg" class="nav-icon" />
                         <div class="tit">{{ $t('nav.leaderboard') }}</div>
                     </div>
-                    <div v-if="userInfo.auth_api_urls && userInfo.auth_api_urls.includes('api/member.Team/rewards')"
-                        :class="['item', route.name === 'statistics' ? 'active' : '']"
+                    <div :class="['item', route.name === 'statistics' ? 'active' : '']"
                         @click="turnToPage('statistics', true)">
-                        <img src="../assets/history-choose.svg" />
+                        <img src="../assets/stats.svg" class="nav-icon" />
                         <div class="tit">{{ $t('nav.statistics') }}</div>
                     </div>
-                    <div v-if="userInfo.auth_api_urls && userInfo.auth_api_urls.includes('api/member.Team/team_statistics')"
-                        :class="['item', route.name === 'teamStatistics' ? 'active' : '']"
+                    <div :class="['item', route.name === 'teamStatistics' ? 'active' : '']"
                         @click="turnToPage('teamStatistics', true)">
-                        <img src="../assets/advertise-choose.svg" />
+                        <img src="../assets/advertise-choose.svg" class="nav-icon" />
                         <div class="tit">{{ $t('nav.teamStatistics') }}</div>
                     </div>
-                    <div v-if="userInfo.auth_api_urls && userInfo.auth_api_urls.includes('api/member.Member/list')"
-                        :class="['item', route.name === 'users' ? 'active' : '']" @click="turnToPage('users', true)">
-                        <img src="../assets/affiliate-choose.svg" />
+                    <div :class="['item', route.name === 'users' ? 'active' : '']" @click="turnToPage('users', true)">
+                        <img src="../assets/affiliate-choose.svg" class="nav-icon" />
                         <div class="tit">{{ $t('nav.team') }}</div>
                     </div>
                 </div>
@@ -124,7 +119,7 @@
                 </ul>
             </el-scrollbar>
         </div>
-        <main class="kaitai-main" :style="{ 'padding-top': rewards.length ? '124px' : '64px' }">
+        <main class="kaitai-main" :style="{ 'padding-top': rewards.length ? '109px' : '64px' }">
             <div class="main" :class="route.name === 'platform' ? 'v2-max1500' : 'v2-max1200'">
                 <RouterView v-slot="{ Component }">
                     <transition name="fade-right" mode="out-in">
@@ -250,32 +245,27 @@
 
                 <!-- Nav Items -->
                 <div style="padding:10px 10px 6px;">
-                    <div v-if="userInfo.auth_api_urls && userInfo.auth_api_urls.includes('api/member.Platform/offers')"
-                        :class="['mobile-nav-item', route.name === 'offers' || route.meta?.activeMenu === 'offers' ? 'active' : '']"
+                    <div :class="['mobile-nav-item', route.name === 'offers' || route.meta?.activeMenu === 'offers' ? 'active' : '']"
                         @click="turnToPage('offers'); mobileMenuVisible = false">
                         <img src="../assets/offers-choose.svg" />
                         <span>{{ $t('nav.offers') }}</span>
                     </div>
-                    <div v-if="userInfo.auth_api_urls && userInfo.auth_api_urls.includes('api/member.Team/ranking')"
-                        :class="['mobile-nav-item', route.name === 'leaderboard' || route.meta?.activeMenu === 'leaderboard' ? 'active' : '']"
+                    <div :class="['mobile-nav-item', route.name === 'leaderboard' || route.meta?.activeMenu === 'leaderboard' ? 'active' : '']"
                         @click="turnToPage('daily', true); mobileMenuVisible = false">
                         <img src="../assets/leaderboard-choose.svg" />
                         <span>{{ $t('nav.leaderboard') }}</span>
                     </div>
-                    <div v-if="userInfo.auth_api_urls && userInfo.auth_api_urls.includes('api/member.Team/rewards')"
-                        :class="['mobile-nav-item', route.name === 'statistics' ? 'active' : '']"
+                    <div :class="['mobile-nav-item', route.name === 'statistics' ? 'active' : '']"
                         @click="turnToPage('statistics', true); mobileMenuVisible = false">
                         <img src="../assets/history-choose.svg" />
                         <span>{{ $t('nav.statistics') }}</span>
                     </div>
-                    <div v-if="userInfo.auth_api_urls && userInfo.auth_api_urls.includes('api/member.Team/team_statistics')"
-                        :class="['mobile-nav-item', route.name === 'teamStatistics' ? 'active' : '']"
+                    <div :class="['mobile-nav-item', route.name === 'teamStatistics' ? 'active' : '']"
                         @click="turnToPage('teamStatistics', true); mobileMenuVisible = false">
                         <img src="../assets/advertise-choose.svg" />
                         <span>{{ $t('nav.teamStatistics') }}</span>
                     </div>
-                    <div v-if="userInfo.auth_api_urls && userInfo.auth_api_urls.includes('api/member.Member/list')"
-                        :class="['mobile-nav-item', route.name === 'users' ? 'active' : '']"
+                    <div :class="['mobile-nav-item', route.name === 'users' ? 'active' : '']"
                         @click="turnToPage('users', true); mobileMenuVisible = false">
                         <img src="../assets/affiliate-choose.svg" />
                         <span>{{ $t('nav.team') }}</span>
@@ -1158,63 +1148,58 @@ footer {
 }
 
 .sidebar-content {
-    height: 64px;
-    box-sizing: border-box;
-    position: relative;
-    transition: all .3s ease;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    flex: 1;
-
-    img {
-        width: 21px;
-        height: 21px;
-        margin-right: 10px;
+    .nav-icon {
+        width: 22px;
+        height: 22px;
+        filter: brightness(0) invert(1);
+        opacity: 0.8;
+        transition: all 0.3s ease;
     }
 
     .item {
-        width: 21px;
-        height: 64px;
         display: flex;
         align-items: center;
-        padding: 0 24px;
-        box-sizing: border-box;
-        font-size: 16px;
-        margin-right: 10px;
+        justify-content: center;
+        height: 42px;
         cursor: pointer;
-        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        margin: 0 4px;
+        border-radius: 8px;
+        padding: 0 12px;
 
         .tit {
-            transition: max-width .3s ease-in-out, opacity .3s ease-in-out;
-            max-width: 20px;
+            max-width: 0;
             opacity: 0;
+            overflow: hidden;
             white-space: nowrap;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-left: 0;
         }
 
-        &:hover {
-            width: auto;
-            background: var(--t-nav-hover-bg, var(--main-color));
+        &:hover, &.active {
+            background: rgb(49, 64, 144);
+            border-radius: 8px;
+            padding: 0 16px;
+            
+            .nav-icon {
+                opacity: 1;
+                transform: scale(1.1);
+                margin-right: 10px;
+                margin-bottom: 0;
+            }
 
             .tit {
                 max-width: 150px;
                 opacity: 1;
-                color: #374E76;
+                margin-left: 5px;
+                color: #fff;
             }
         }
-    }
 
-    .toggle {
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        text-align: center;
-        padding: 15px 0 10px;
-        border-top: 1px solid #dbdbdb;
-        color: #019ca1;
-        cursor: pointer;
-        overflow: hidden;
+        &.active::after {
+            display: none;
+        }
     }
 }
 

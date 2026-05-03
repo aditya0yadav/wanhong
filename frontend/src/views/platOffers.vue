@@ -112,7 +112,7 @@
                             <span class="meta-chip" v-if="showLoi">LOI: {{ row.project_loi }}</span>
                             <span class="meta-chip" v-if="showIr">IR: {{ row.project_ir }}</span>
                             <span class="meta-chip" v-if="showQuota">{{ row.project_complete }}/{{ row.project_quota
-                            }}</span>
+                                }}</span>
                         </div>
                         <div class="offer-card-actions">
                             <button class="oc-btn" @click="start(row)">{{ $t('offers.start') }}</button>
@@ -171,7 +171,7 @@
                         <div class="meta-bar" v-if="structuredQuota?.surveyID">
                             <div class="meta-tag">ID: {{ structuredQuota.surveyID }}</div>
                             <div class="meta-desc" v-if="structuredQuota?.projectBrief">{{ structuredQuota.projectBrief
-                            }}</div>
+                                }}</div>
                         </div>
 
                         <!-- Progress -->
@@ -529,6 +529,7 @@ const showClick = ref(false)
 const fetchOffers = () => {
     tableData.value = [];
     loading.value = true;
+    console.log(tableData.value);
     getOffers(query.value).then(res => {
         console.log('[DEBUG] getOffers Response:', res);
         const data = res.data.list;

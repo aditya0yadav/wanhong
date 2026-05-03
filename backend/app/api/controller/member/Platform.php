@@ -1104,14 +1104,14 @@ class Platform extends BaseController
 						}
 						$domainName = $_SERVER['HTTP_HOST'];
 						$url = $protocol . '://' . $domainName;
-						$postData = json_encode([
-							"surveyID" => is_numeric($project['project_no']) ? (int)$project['project_no'] : $project['project_no'],
-							"SuccessLink" => $url . '/api/index/callback?platform=Gowebsurveys&uid={{panellist_id}}&status=C',
-							"disQualifiedLink" => $url . '/api/index/callback?platform=Gowebsurveys&uid={{panellist_id}}&status=S',
-							"TermLink" => $url . '/api/index/callback?platform=Gowebsurveys&uid={{panellist_id}}&status=T',
-							"OverQuotaLink" => $url . '/api/index/callback?platform=Gowebsurveys&uid={{panellist_id}}&status=Q',
-							"useStaticLink" => 0
-						]);
+						$postData = '{
+                                "surveyID":' . $project['project_no'] . ',
+                                "SuccessLink":"' . $url . '/api/index/callback?platform=Gowebsurveys&uid={{panellist_id}}&status=C",
+                                "disQualifiedLink":"' . $url . '/api/index/callback?platform=Gowebsurveys&uid={{panellist_id}}&status=S",
+                                "TermLink":"' . $url . '/api/index/callback?platform=Gowebsurveys&uid={{panellist_id}}&status=T",
+                                "OverQuotaLink":"' . $url . '/api/index/callback?platform=Gowebsurveys&uid={{panellist_id}}&status=Q",
+                                "useStaticLink":0
+                            }';
 						curl_setopt_array($curl, [
 							CURLOPT_URL => $platform['platform_click_url'],
 							CURLOPT_RETURNTRANSFER => true,
@@ -1153,7 +1153,7 @@ class Platform extends BaseController
 								$project_click_url = substr($result['surveyInfo'][0]['SurveyEntryUrl'], 0, $pos) . '&pid=' . $uuid;
 								echo '<script>window.location.href="' . $project_click_url . '";</script>';
 							} else {
-								echo $result['apiMessages'];
+								echo "Gowebsurveys API Error: " . $result['apiMessages'] . " | Sent Payload: " . $postData;
 							}
 
 						}
@@ -1179,14 +1179,14 @@ class Platform extends BaseController
 							CURLOPT_FOLLOWLOCATION => true,
 							CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 							CURLOPT_CUSTOMREQUEST => 'POST',
-							CURLOPT_POSTFIELDS => json_encode([
-								"surveyID" => is_numeric($project['project_no']) ? (int)$project['project_no'] : $project['project_no'],
-								"SuccessLink" => $url . '/api/index/callback?platform=Pollsopinion&uid={{panellist_id}}&status=C',
-								"disQualifiedLink" => $url . '/api/index/callback?platform=Pollsopinion&uid={{panellist_id}}&status=S',
-								"TermLink" => $url . '/api/index/callback?platform=Pollsopinion&uid={{panellist_id}}&status=T',
-								"OverQuotaLink" => $url . '/api/index/callback?platform=Pollsopinion&uid={{panellist_id}}&status=Q',
-								"useStaticLink" => 0
-							]),
+							CURLOPT_POSTFIELDS => '{
+                                "surveyID":' . $project['project_no'] . ',
+                                "SuccessLink":"' . $url . '/api/index/callback?platform=Pollsopinion&uid={{panellist_id}}&status=C",
+                                "disQualifiedLink":"' . $url . '/api/index/callback?platform=Pollsopinion&uid={{panellist_id}}&status=S",
+                                "TermLink":"' . $url . '/api/index/callback?platform=Pollsopinion&uid={{panellist_id}}&status=T",
+                                "OverQuotaLink":"' . $url . '/api/index/callback?platform=Pollsopinion&uid={{panellist_id}}&status=Q",
+                                "useStaticLink":0
+                            }',
 							CURLOPT_HTTPHEADER => [
 								"Accept: application/json",
 								"Authorization: $akey",
