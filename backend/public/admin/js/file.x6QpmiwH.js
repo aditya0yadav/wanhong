@@ -1,0 +1,1 @@
+import{a3 as a,b5 as e,o as n,c as o}from"./index.CW65sKbI.js";const s=a({name:"FileFile",components:{FileManage:e},data:()=>({name:"文件管理"})},[["render",function(a,s,t,r,i,c){const m=e;return n(),o(m)}]]);export{s as default};

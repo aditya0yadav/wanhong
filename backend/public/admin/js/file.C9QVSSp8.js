@@ -1,1 +1,0 @@
-import{a3 as a,b3 as e,W as n,o as s,c as o}from"./index.6nL-NFv3.js";const t=a({name:"FileFile",components:{FileManage:e},data:()=>({name:"文件管理"})},[["render",function(a,e,t,i,r,c){const l=n("FileManage");return s(),o(l)}]]);export{t as default};
