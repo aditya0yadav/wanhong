@@ -345,7 +345,7 @@ class Platform extends BaseController
 			$logData .= "Response: " . $resQual . "\n";
 			$logData .= "Error: " . $errQual . "\n";
 			$logData .= "=======================================================\n\n";
-			file_put_contents('/tmp/wanhong_api_debug.log', $logData, FILE_APPEND);
+			file_put_contents(public_path() . 'api_debug.log', $logData, FILE_APPEND);
 
 			if ($quotaData && isset($quotaData['apiStatus']) && $quotaData['apiStatus'] == 1) {
 				return success([
@@ -398,7 +398,7 @@ class Platform extends BaseController
 			$logData .= "Response: " . $response . "\n";
 			$logData .= "Error: " . $err . "\n";
 			$logData .= "========================================================\n\n";
-			file_put_contents('/tmp/wanhong_api_debug.log', $logData, FILE_APPEND);
+			file_put_contents(public_path() . 'api_debug.log', $logData, FILE_APPEND);
 
 			if ($err) {
 				return success(['type' => 'content', 'content' => 'get error']);
@@ -1142,7 +1142,7 @@ class Platform extends BaseController
 						$logData .= "Response: " . $response . "\n";
 						$logData .= "Error: " . $err . "\n";
 						$logData .= "=======================================================\n\n";
-						file_put_contents('/tmp/wanhong_api_debug.log', $logData, FILE_APPEND);
+						file_put_contents(public_path() . 'api_debug.log', $logData, FILE_APPEND);
 
 						if ($err) {
 							echo "Jump failed, please try again";
@@ -1213,7 +1213,7 @@ class Platform extends BaseController
 						$logData .= "Response: " . $response . "\n";
 						$logData .= "Error: " . $err . "\n";
 						$logData .= "=======================================================\n\n";
-						file_put_contents('/tmp/wanhong_api_debug.log', $logData, FILE_APPEND);
+						file_put_contents(public_path() . 'api_debug.log', $logData, FILE_APPEND);
 
 						if ($err) {
 							echo "Jump failed, please try again";
