@@ -1,0 +1,113 @@
+@import './transition';
+@import './sidebar';
+@import './reset';
+@import './dark';
+@import './yyladmin';
+body{
+  box-sizing: border-box;
+  background:#f6f6f6;
+}
+.app-container {
+  padding: 15px;
+}
+.link-content {
+  position: fixed;
+  left:0;
+  right:0;
+  top:0;
+  bottom:0;
+  background-color: #fff;
+}
+:root {
+  --el-color-primary: rgb(51, 99, 255) !important;
+  --el-color-primary-light-3: rgba(51, 99, 255,.9) !important;
+  --el-color-primary-light-5: rgba(51, 99, 255,.7);
+  --el-color-primary-light-7: rgba(51, 99, 255,.5);
+  --el-color-primary-light-8: rgba(51, 99, 255,.3);
+  --el-color-primary-light-9: rgba(51, 99, 255, .2);
+  --el-color-primary-dark-2: rgb(51.2, 126.4, 204);
+  --cs-bg-color: rgba(255, 255, 255, .2) !important;
+  --el-menu-item-height: 45px !important;
+  --el-border-color: #dbdbdb;
+  --el-text-color-disabled: #4c4c4c;
+  --cus-bg-color:#F7F9FF;
+  --el-dialog-border-radius: 20px !important;
+}
+.el-sub-menu__title,.submenu-title-noDropdown{
+  background-color: var(--subTitleBg) !important;
+}
+.el-menu-item,.el-sub-menu__title{
+  border-radius: 10px;
+  height: 40px !important;
+  line-height: 40px !important;
+  margin-bottom: 5px !important;
+}
+.el-table th.el-table__cell{
+ 
+}
+.el-table--default,.el-table--small{
+  border-radius: 10px;
+  overflow: hidden;
+}
+.el-menu-item.is-active{
+  background-color: var(--menuHover) !important;
+}
+.isMix .el-menu--horizontal>.el-menu-item.is-active{
+  color: #fff !important;
+}
+.el-sub-menu .el-menu-item{
+  font-size: 13px !important;
+}
+.el-dialog__header{
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05)!important;
+  margin-bottom: 20px;
+}
+.el-dialog__body .el-tabs{
+  margin-top: -20px;
+}
+
+.el-breadcrumb__inner a, .el-breadcrumb__inner.is-link{
+  color: var(--menuText) !important;
+}
+input:-webkit-autofill {
+  box-shadow: 0 0 0 1000px transparent inset !important; // 颜色可以随意，这里设置的是透明色
+}
+
+input:-internal-autofill-previewed,
+input:-internal-autofill-selected {
+  transition: background-color 5000s ease-in-out 0s !important;
+}
+.statistic-item{
+  padding: 30px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px;
+  margin-bottom:20px;
+  color:#666;
+  &.c1{
+    border-top: 2px solid rgb(33 67 94 / 70%);
+    color:rgb(33 67 94 / 70%);
+  }
+  &.c2{
+    border-top: 2px solid rgba(0,120,212,.7);
+    color:rgba(0,120,212,.7);
+  }
+  &.c3{
+    border-top: 2px solid rgb(103, 194, 58);
+    color:rgb(103, 194, 58);
+  }
+  &.c4{
+    border-top: 2px solid rgb(241, 35, 35);
+    color:rgb(241, 35, 35);
+  }
+  &.c5{
+    background-color:rgb(103, 194, 58);
+    color:#fff;
+    border-radius:10px;
+  }
+  .tit{
+    font-size: 16px;
+    font-weight: bold;
+  }
+  .cont{
+    font-size:20px;
+  }
+}

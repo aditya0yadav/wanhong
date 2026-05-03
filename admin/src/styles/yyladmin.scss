@@ -1,0 +1,85 @@
+// yyladmin css
+
+.ya-padding-left {
+  padding-left: 10px;
+}
+
+.ya-margin-top {
+  margin-top: 10px;
+}
+
+.ya-margin-right {
+  margin-right: 10px;
+}
+
+.ya-margin-bottom {
+  margin-bottom: 10px;
+}
+
+.ya-margin-left {
+  margin-left: 10px;
+}
+
+.ya-search-field {
+  width: 7%;
+  min-width: 110px;
+  max-width: 120px;
+}
+
+.ya-search-exp {
+  width: 7%;
+  min-width: 110px;
+  max-width: 120px;
+}
+
+.ya-search-value {
+  width: 200px !important;
+}
+
+.ya-date-field {
+  width: 110px !important;
+}
+
+.ya-date-value {
+  width: 216px !important;
+}
+
+.ya-select-field {
+  width: 150px !important;
+}
+.demo-image__error .block {
+  padding: 30px 0;
+  text-align: center;
+  border-right: solid 1px var(--el-border-color);
+  display: inline-block;
+  width: 49%;
+  box-sizing: border-box;
+  vertical-align: top;
+}
+.image__default {
+  position: relative;
+}
+.image__default .image-slot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left:0;
+  top:0;
+  border: 1px solid var(--el-border-color);
+  color: var(--el-text-color-secondary);
+  font-size: 30px;
+  border-radius: 5px;
+}
+.image__default .image-slot .el-icon {
+  font-size: 30px;
+}
+.image__default .el-image {
+  padding: 0 5px;
+  max-width: 300px;
+  max-height: 200px;
+  width: 100%;
+  height: 100%;
+}
