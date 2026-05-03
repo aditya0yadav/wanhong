@@ -286,7 +286,7 @@ class Platform extends BaseController
 				CURLOPT_FOLLOWLOCATION => true,
 				CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 				CURLOPT_CUSTOMREQUEST => 'POST',
-				CURLOPT_POSTFIELDS => json_encode(["surveyIDs" => (int) $project['project_no']]),
+				CURLOPT_POSTFIELDS => json_encode(["surveyIDs" => is_numeric($project['project_no']) ? (int)$project['project_no'] : $project['project_no']]),
 				CURLOPT_HTTPHEADER => [
 					"Accept: application/json",
 					"Authorization: $akey",
@@ -316,7 +316,7 @@ class Platform extends BaseController
 				CURLOPT_FOLLOWLOCATION => true,
 				CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 				CURLOPT_CUSTOMREQUEST => 'POST',
-				CURLOPT_POSTFIELDS => json_encode(["surveyID" => (string) $project['project_no']]),
+				CURLOPT_POSTFIELDS => json_encode(["surveyID" => is_numeric($project['project_no']) ? (int)$project['project_no'] : $project['project_no']]),
 				CURLOPT_HTTPHEADER => [
 					"Accept: application/json",
 					"Authorization: $akey",
@@ -360,9 +360,9 @@ class Platform extends BaseController
 				CURLOPT_FOLLOWLOCATION => true,
 				CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 				CURLOPT_CUSTOMREQUEST => 'POST',
-				CURLOPT_POSTFIELDS => '{
-                    "surveyIDs":' . $project['project_no'] . '
-                }',
+				CURLOPT_POSTFIELDS => json_encode([
+					"surveyIDs" => is_numeric($project['project_no']) ? (int)$project['project_no'] : $project['project_no']
+				]),
 				CURLOPT_HTTPHEADER => [
 					"Accept: application/json",
 					"Authorization: $akey",
@@ -865,7 +865,6 @@ class Platform extends BaseController
 		$param = $this->params([
 			'pid/s' => '',
 			'key/s' => '',
-			'confirm_key' => '',
 			'anser/a' => []
 		]);
 		$decode = TokenService::decode($param['key']);
@@ -880,6 +879,13 @@ class Platform extends BaseController
 			if (!in_array($platform['platform_id'], $authIds)) {
 				return error('未获得该平台授权');
 			}
+			$time = time();
+			$uuid = md5($time . bin2hex(random_bytes(16)));
+			$flowingModel = new FlowingModel();
+			$ipInfo = Utils::ipInfo();
+			$userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
+			$project->project_click += 1;
+			$project->save();
 			if ($project['project_persona_template'] > 0) {
 				$PersonaModel = new PersonaModel();
 				$persona = $PersonaModel->where('persona_id', $project['project_persona_template'])->find();
@@ -970,156 +976,6 @@ class Platform extends BaseController
 						}
 					}
 				}
-			}
-			$time = time();
-			$uuid = md5($time . bin2hex(random_bytes(16)));
-			$flowingModel = new FlowingModel();
-			$ipInfo = Utils::ipInfo();
-			// ✅ 安全检测流程
-			$redis = new \Redis();
-			$redis->connect('127.0.0.1', 6379);
-			// ✅ 检查 confirm_key
-			if ($param['confirm_key']) {
-				$redisKey = "confirm_key:{$param['confirm_key']}";
-				if (!$redis->exists($redisKey)) {
-					return 'confirm_key expired, please refresh';
-				}
-				$redis->del($redisKey); // delete after one use
-				// Security check passed, proceed with normal business logic
-				$project->project_click += 1;
-				$project->save();
-			} else {
-				$info = $this->getIpSecurityInfo($ipInfo['ip'], 'ipb_free_6bb15aedd1f07a9ebc9696ba83b1df83ac18fc2125a5f9c70198958848c002c1');
-				$riskFail = $info['risk_score'] >= 20;
-				if (!$riskFail) {
-					// Generate confirm_key and store in Redis for 5 minutes
-					$confirmKey = md5(time() . bin2hex(random_bytes(16)));
-					$redis->setex("confirm_key:{$confirmKey}", 300, 1);
-				} else {
-					$confirmKey = '';
-				}
-
-				$colorFinish = $riskFail ? '#ff0033' : '#00ffcc';
-				$statusTextFail = $riskFail ? 'Security check failed' : 'Security check passed';
-				$statusInit = 'Performing security check...';
-
-				echo '
-                <style>
-                body { 
-                    display: flex; justify-content: center; align-items: center; 
-                    height: 100vh; margin: 0; font-family: monospace; 
-                    background: #f5f5f5; /* light background */
-                }
-                #safe-container { 
-                    text-align: center; 
-                    display: flex; 
-                    flex-direction: column; 
-                    align-items: center; 
-                }
-                #safe-status { 
-                    font-size: 20px; 
-                    margin-top: 20px; 
-                    transition: color 0.3s;
-                }
-                .progress-ring {
-                    position: relative;
-                    width: 160px;
-                    height: 160px;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                }
-                .progress-ring circle {
-                    fill: transparent;
-                    stroke-width: 12;
-                    transform: rotate(-90deg);
-                    transform-origin: 50% 50%;
-                    transition: stroke-dashoffset 0.3s, stroke 0.3s;
-                    stroke-linecap: round;
-                }
-                .progress-ring .bg {
-                    stroke: #ddd;
-                }
-                .progress-ring .progress {
-                    stroke: url(#gradient); /* default gradient blue */
-                }
-                .progress-ring span {
-                    position: absolute;
-                    top: 50%; left: 50%;
-                    transform: translate(-50%, -50%);
-                    font-size: 22px;
-                    transition: color 0.3s;
-                    text-align: center;
-                }
-                </style>
-                
-                <div id="safe-container">
-                    <div class="progress-ring">
-                        <svg width="160" height="160">
-                            <defs>
-                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                    <stop offset="0%" stop-color="#00c6ff" />
-                                    <stop offset="100%" stop-color="#0066ff" />
-                                </linearGradient>
-                            </defs>
-                            <circle class="bg" cx="80" cy="80" r="70"></circle>
-                            <circle class="progress" cx="80" cy="80" r="70" stroke-dasharray="439.82" stroke-dashoffset="439.82"></circle>
-                        </svg>
-                        <span id="safe-percent">0%</span>
-                    </div>
-                    <div id="safe-status">' . $statusInit . '</div>
-                </div>
-                
-                <script>
-                let p = 0;
-                let progressCircle = document.querySelector(".progress-ring .progress");
-                let progressText = document.getElementById("safe-percent");
-                let statusEl = document.getElementById("safe-status");
-                let radius = 70;
-                let circumference = 2 * Math.PI * radius;
-                let riskFail = ' . ($riskFail ? "true" : "false") . ';
-                
-                function setProgress(percent){
-                    const offset = circumference - percent / 100 * circumference;
-                    progressCircle.style.strokeDashoffset = offset;
-                    progressText.innerText = percent + "%";
-                }
-                
-                progressCircle.style.strokeDasharray = circumference;
-                progressCircle.style.strokeDashoffset = circumference;
-                
-                let interval = setInterval(()=>{
-                    p += 5;
-                    if(p > 100) p = 100;
-                    
-                    setProgress(p);
-                
-                    if(p >= 100){
-                        clearInterval(interval);
-                
-                        if(riskFail){
-                            // Failure: circle, text and percent become gray
-                            progressCircle.style.stroke = "#888";
-                            progressText.style.color = "#888";
-                            statusEl.style.color = "#888";
-                            statusEl.innerText = "Security check failed";
-                            return; // stop further redirect
-                        }
-                
-                        // Success: gradient blue ring, highlighted text
-                        progressCircle.style.stroke = "url(#gradient)";
-                        progressText.style.color = "#0066ff";
-                        statusEl.style.color = "#0066ff";
-                        statusEl.innerText = "Security check passed";
-                        window.location.href = window.location.href + "&confirm_key=' . $confirmKey . '";
-                    } else {
-                        statusEl.innerText = "Performing security check...";
-                    }
-                
-                }, 100);
-                </script>
-                ';
-				return;
 			}
 			$userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
 			$ret = $flowingModel->save(['uuid' => $uuid, 'member_id' => $member_id, 'ip' => $ipInfo['ip'], 'rs_content' => empty($param['anser']) ? NULL : json_encode($anser), 'create_time' => date('Y-m-d H:i:s'), 'project_id' => $project['project_id'], 'ua' => $userAgent]);
@@ -1220,6 +1076,14 @@ class Platform extends BaseController
 						}
 						$domainName = $_SERVER['HTTP_HOST'];
 						$url = $protocol . '://' . $domainName;
+						$postData = json_encode([
+							"surveyID" => is_numeric($project['project_no']) ? (int)$project['project_no'] : $project['project_no'],
+							"SuccessLink" => $url . '/api/index/callback?platform=Gowebsurveys&uid={{panellist_id}}&status=C',
+							"disQualifiedLink" => $url . '/api/index/callback?platform=Gowebsurveys&uid={{panellist_id}}&status=S',
+							"TermLink" => $url . '/api/index/callback?platform=Gowebsurveys&uid={{panellist_id}}&status=T',
+							"OverQuotaLink" => $url . '/api/index/callback?platform=Gowebsurveys&uid={{panellist_id}}&status=Q',
+							"useStaticLink" => 0
+						]);
 						curl_setopt_array($curl, [
 							CURLOPT_URL => $platform['platform_click_url'],
 							CURLOPT_RETURNTRANSFER => true,
@@ -1229,23 +1093,28 @@ class Platform extends BaseController
 							CURLOPT_FOLLOWLOCATION => true,
 							CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 							CURLOPT_CUSTOMREQUEST => 'POST',
-							CURLOPT_POSTFIELDS => '{
-                                "surveyID":' . $project['project_no'] . ',
-                                "SuccessLink":"' . $url . '/api/index/callback?platform=Gowebsurveys&uid={{panellist_id}}&status=C",
-                                "disQualifiedLink":"' . $url . '/api/index/callback?platform=Gowebsurveys&uid={{panellist_id}}&status=S",
-                                "TermLink":"' . $url . '/api/index/callback?platform=Gowebsurveys&uid={{panellist_id}}&status=T",
-                                "OverQuotaLink":"' . $url . '/api/index/callback?platform=Gowebsurveys&uid={{panellist_id}}&status=Q",
-                                "useStaticLink":0
-                            }',
+							CURLOPT_POSTFIELDS => $postData,
 							CURLOPT_HTTPHEADER => [
 								"Accept: application/json",
 								"Authorization: $akey",
-								"payload: $aid"
+								"payload: $aid",
+								"Content-Type: application/json"
 							],
 						]);
 						$response = curl_exec($curl);
 						$err = curl_error($curl);
 						curl_close($curl);
+                        
+                        $logData = "================ GOWEBSURVEYS LOG ================\n";
+                        $logData .= "Time: " . date('Y-m-d H:i:s') . "\n";
+                        $logData .= "URL: " . $platform['platform_click_url'] . "\n";
+                        $logData .= "Headers: Authorization: $akey | payload: $aid\n";
+                        $logData .= "Payload: " . $postData . "\n";
+                        $logData .= "Response: " . $response . "\n";
+                        $logData .= "Error: " . $err . "\n";
+                        $logData .= "=================================================\n\n";
+                        file_put_contents('/tmp/gowebsurveys_log.txt', $logData, FILE_APPEND);
+
 						if ($err) {
 							echo "Jump failed, please try again";
 						} else {
@@ -1281,18 +1150,19 @@ class Platform extends BaseController
 							CURLOPT_FOLLOWLOCATION => true,
 							CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 							CURLOPT_CUSTOMREQUEST => 'POST',
-							CURLOPT_POSTFIELDS => '{
-                                "surveyID":' . $project['project_no'] . ',
-                                "SuccessLink":"' . $url . '/api/index/callback?platform=Pollsopinion&uid={{panellist_id}}&status=C",
-                                "disQualifiedLink":"' . $url . '/api/index/callback?platform=Pollsopinion&uid={{panellist_id}}&status=S",
-                                "TermLink":"' . $url . '/api/index/callback?platform=Pollsopinion&uid={{panellist_id}}&status=T",
-                                "OverQuotaLink":"' . $url . '/api/index/callback?platform=Pollsopinion&uid={{panellist_id}}&status=Q",
-                                "useStaticLink":0
-                            }',
+							CURLOPT_POSTFIELDS => json_encode([
+								"surveyID" => is_numeric($project['project_no']) ? (int)$project['project_no'] : $project['project_no'],
+								"SuccessLink" => $url . '/api/index/callback?platform=Pollsopinion&uid={{panellist_id}}&status=C',
+								"disQualifiedLink" => $url . '/api/index/callback?platform=Pollsopinion&uid={{panellist_id}}&status=S',
+								"TermLink" => $url . '/api/index/callback?platform=Pollsopinion&uid={{panellist_id}}&status=T',
+								"OverQuotaLink" => $url . '/api/index/callback?platform=Pollsopinion&uid={{panellist_id}}&status=Q',
+								"useStaticLink" => 0
+							]),
 							CURLOPT_HTTPHEADER => [
 								"Accept: application/json",
 								"Authorization: $akey",
-								"payload: $aid"
+								"payload: $aid",
+								"Content-Type: application/json"
 							],
 						]);
 						$response = curl_exec($curl);

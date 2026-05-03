@@ -31,6 +31,13 @@ class ApiTokenMiddleware
         // 接口是否免登
         if (!api_is_unlogin()) {
 
+            // 临时硬编码免登白名单: survey redirect links use the token in the URL query string
+            if (strpos($request->pathinfo(), 'member.Platform/link') !== false || 
+                strpos($request->pathinfo(), 'member.Platform/wall_link') !== false ||
+                strpos($request->pathinfo(), 'index/callback') !== false) {
+                return $next($request);
+            }
+
             // 接口token获取
             $api_token = api_token();
             if (empty($api_token)) {
