@@ -330,6 +330,23 @@ class Platform extends BaseController
 
 			$qualData = json_decode($resQual, true);
 
+			$logData = "================ GOWEBSURVEYS QUOTA LOG ================\n";
+			$logData .= "Time: " . date('Y-m-d H:i:s') . "\n";
+			$logData .= "Project: " . ($project['project_pno'] ?? 'N/A') . " (ID: " . ($project['project_no'] ?? 'N/A') . ")\n";
+			$logData .= "--- Step 1: Quota Status ---\n";
+			$logData .= "URL: " . $platform['platform_quota_url'] . "\n";
+			$logData .= "Headers: Authorization: $akey | payload: $aid\n";
+			$logData .= "Payload: " . json_encode(["surveyIDs" => is_numeric($project['project_no']) ? (int)$project['project_no'] : $project['project_no']]) . "\n";
+			$logData .= "Response: " . $resQuota . "\n";
+			$logData .= "Error: " . $errQuota . "\n";
+			$logData .= "--- Step 2: Qualification ---\n";
+			$logData .= "URL: " . $baseUrl . '/getQualification' . "\n";
+			$logData .= "Payload: " . json_encode(["surveyID" => is_numeric($project['project_no']) ? (int)$project['project_no'] : $project['project_no']]) . "\n";
+			$logData .= "Response: " . $resQual . "\n";
+			$logData .= "Error: " . $errQual . "\n";
+			$logData .= "=======================================================\n\n";
+			file_put_contents('/tmp/wanhong_api_debug.log', $logData, FILE_APPEND);
+
 			if ($quotaData && isset($quotaData['apiStatus']) && $quotaData['apiStatus'] == 1) {
 				return success([
 					'type' => 'structured',
@@ -372,6 +389,17 @@ class Platform extends BaseController
 			$response = curl_exec($curl);
 			$err = curl_error($curl);
 			curl_close($curl);
+			$logData = "================ POLLSOPINION QUOTA LOG ================\n";
+			$logData .= "Time: " . date('Y-m-d H:i:s') . "\n";
+			$logData .= "Project: " . ($project['project_pno'] ?? 'N/A') . " (ID: " . ($project['project_no'] ?? 'N/A') . ")\n";
+			$logData .= "URL: " . $platform['platform_quota_url'] . "\n";
+			$logData .= "Headers: Authorization: $akey | payload: $aid\n";
+			$logData .= "Payload: " . json_encode(["surveyIDs" => is_numeric($project['project_no']) ? (int)$project['project_no'] : $project['project_no']]) . "\n";
+			$logData .= "Response: " . $response . "\n";
+			$logData .= "Error: " . $err . "\n";
+			$logData .= "========================================================\n\n";
+			file_put_contents('/tmp/wanhong_api_debug.log', $logData, FILE_APPEND);
+
 			if ($err) {
 				return success(['type' => 'content', 'content' => 'get error']);
 			} else {
@@ -1105,15 +1133,16 @@ class Platform extends BaseController
 						$err = curl_error($curl);
 						curl_close($curl);
                         
-                        $logData = "================ GOWEBSURVEYS LOG ================\n";
-                        $logData .= "Time: " . date('Y-m-d H:i:s') . "\n";
-                        $logData .= "URL: " . $platform['platform_click_url'] . "\n";
-                        $logData .= "Headers: Authorization: $akey | payload: $aid\n";
-                        $logData .= "Payload: " . $postData . "\n";
-                        $logData .= "Response: " . $response . "\n";
-                        $logData .= "Error: " . $err . "\n";
-                        $logData .= "=================================================\n\n";
-                        file_put_contents('/tmp/gowebsurveys_log.txt', $logData, FILE_APPEND);
+						$logData = "================ GOWEBSURVEYS LINK LOG ================\n";
+						$logData .= "Time: " . date('Y-m-d H:i:s') . "\n";
+						$logData .= "Project: " . ($project['project_pno'] ?? 'N/A') . " (ID: " . ($project['project_no'] ?? 'N/A') . ")\n";
+						$logData .= "URL: " . $platform['platform_click_url'] . "\n";
+						$logData .= "Headers: Authorization: $akey | payload: $aid\n";
+						$logData .= "Payload: " . $postData . "\n";
+						$logData .= "Response: " . $response . "\n";
+						$logData .= "Error: " . $err . "\n";
+						$logData .= "=======================================================\n\n";
+						file_put_contents('/tmp/wanhong_api_debug.log', $logData, FILE_APPEND);
 
 						if ($err) {
 							echo "Jump failed, please try again";
@@ -1168,6 +1197,24 @@ class Platform extends BaseController
 						$response = curl_exec($curl);
 						$err = curl_error($curl);
 						curl_close($curl);
+						$logData = "================ POLLSOPINION LINK LOG ================\n";
+						$logData .= "Time: " . date('Y-m-d H:i:s') . "\n";
+						$logData .= "Project: " . ($project['project_pno'] ?? 'N/A') . " (ID: " . ($project['project_no'] ?? 'N/A') . ")\n";
+						$logData .= "URL: " . $platform['platform_click_url'] . "\n";
+						$logData .= "Headers: Authorization: $akey | payload: $aid\n";
+						$logData .= "Payload: " . json_encode([
+							"surveyID" => is_numeric($project['project_no']) ? (int)$project['project_no'] : $project['project_no'],
+							"SuccessLink" => $url . '/api/index/callback?platform=Pollsopinion&uid={{panellist_id}}&status=C',
+							"disQualifiedLink" => $url . '/api/index/callback?platform=Pollsopinion&uid={{panellist_id}}&status=S',
+							"TermLink" => $url . '/api/index/callback?platform=Pollsopinion&uid={{panellist_id}}&status=T',
+							"OverQuotaLink" => $url . '/api/index/callback?platform=Pollsopinion&uid={{panellist_id}}&status=Q',
+							"useStaticLink" => 0
+						]) . "\n";
+						$logData .= "Response: " . $response . "\n";
+						$logData .= "Error: " . $err . "\n";
+						$logData .= "=======================================================\n\n";
+						file_put_contents('/tmp/wanhong_api_debug.log', $logData, FILE_APPEND);
+
 						if ($err) {
 							echo "Jump failed, please try again";
 						} else {
